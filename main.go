@@ -2,33 +2,56 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 
 	_ "github.com/lib/pq"
 )
 
+type cliente struct {
+	nrocliente                            int
+	nombre, apellido, domicilio, telefono string
+	//telefono string??? en el enunciado es char(12)
+}
+
 func main() {
 	createDatabase()
-	fmt.Print("alo")
 
-	db, err := sql.Open("postgres", "user=postgres host=localhost dbname=guarani sslmode=disable")
+	db, err := sql.Open("postgres", "user=postgres host=localhost dbname=tarjetascredito sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 
-	_, err = db.Exec(`create table alumne (legajo int, nombre text, apellido text)`)
+	_, err = db.Exec(`create table cliente(nrocliente int, nombre text, apellido text, domicilio text, telefono char(12))`)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	_, err = db.Exec(`insert into alumne values (1, 'Cristina', 'Kirchner');
-					insert into alumne values (2, 'Juan Domingo', 'Peron');`)
+	_, err = db.Exec(`insert into cliente values (1, 'Juan', 'Lopez', 'Urquiza 2629', '1157845695'); 
+	                  insert int cliente values (2, 'Maria', 'Ramirez', 'Oribe 1576', '1159674130')`) //ejemplo
 
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	/*
+		rows, err := db.Query(`select * from cliente`)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer rows.Close()
+
+		var c cliente
+
+		for rows.Next() {
+			if err := rows.Scan(&c.nrocliente, &c.nombre, &c.apellido, &c.domicilio, &c.telefono); err != nil {
+				log.Fatal(err)
+			}
+			fmt.Printf("%v %v %v\n", c.nrocliente, c.nombre, c.apellido, c.domicilio, c.telefono)
+		}
+		if err = rows.Err(); err != nil {
+			log.Fatal(err)
+		}*/
 }
 
 func createDatabase() {
@@ -38,7 +61,7 @@ func createDatabase() {
 	}
 	defer db.Close()
 
-	_, err = db.Exec(`create database guarani`)
+	_, err = db.Exec(`create database tarjetascredito`)
 	if err != nil {
 		log.Fatal(err)
 	}
