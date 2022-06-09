@@ -5,24 +5,27 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-
-	_ "github.com/lib/pq"
+	_"github.com/lib/pq"
 )
 
 type cliente struct {
-	nrocliente                            int
-	nombre, apellido, domicilio, telefono string
+	nrocliente int
+	nombre, apellido, domicilio string
+	telefono int
 }
 
 func main() {
-	createDatabase()
+	createDatabase() //Crea una nueva base de datos
 
+	//Conecta con la base de datos creada
 	db, err := sql.Open("postgres", "user=postgres host=localhost dbname=tarjetascredito sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
+
 	}
 	defer db.Close()
 
+	//Lee las tablas (Modelos de datos)
 	_, err = db.Exec(leerArchivo("tablas.sql"))
 	if err != nil {
 		log.Fatal(err)
@@ -46,6 +49,7 @@ func main() {
 	if err = rows.Err(); err != nil {
 		log.Fatal(err)
 	}
+	
 }
 
 /*_, err = db.Exec(`create table cliente(nrocliente int, nombre text, apellido text, domicilio text, telefono char(12))`)
