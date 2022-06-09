@@ -5,7 +5,7 @@ insert into comercio values(15, 'Libreria El patito feo', 'Av San Luis 1687', '8
 --nrocomercio de 2 digitos para hacerlo distintivo al del cliente?
 --completar con 20 datos para comercio
 
-insert into tarjeta values(4756326984155476, 1, '202201', '202405', '6713', 15000000.00, 'vigente');
+insert into tarjeta values(4756326984155476, 1, '202201', '202405', '6713', 150000.00, 'vigente');
 --Todes les clientes tendrán una tarjeta, excepto dos clientes que tendrán dos tarjetas cada une. Una tarjeta deberá estar expirada en su fecha de vencimiento.
 
 insert into consumo values(4756326984155476, '6713', 15, 2000.00); --consumo válido 

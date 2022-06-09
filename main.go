@@ -12,7 +12,7 @@ import (
 type cliente struct {
 	nrocliente                  int
 	nombre, apellido, domicilio string
-	telefono                    int
+	telefono                    string
 }
 
 func main() {
@@ -26,8 +26,14 @@ func main() {
 	}
 	defer db.Close()
 
-	//Lee las tablas (Modelos de datos) //ERROR pd sintaxis
+	//Lee las tablas (Modelos de datos)
 	_, err = db.Exec(leerArchivo("tablas.sql"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//Carga las tablas con los datos
+	_, err = db.Exec(leerArchivo("datos.sql"))
 	if err != nil {
 		log.Fatal(err)
 	}
