@@ -17,7 +17,7 @@ type cliente struct {
 
 func main() {
 	createDatabase() //Crea una nueva base de datos
-
+	menu()
 	//Conecta con la base de datos creada
 	db, err := sql.Open("postgres", "user=postgres host=localhost dbname=tarjetascredito sslmode=disable")
 	if err != nil {
@@ -114,4 +114,23 @@ func leerArchivo(archivo string) string {
 	}
 	ret := string(datos)
 	return ret
+}
+
+func menu(){
+
+	var nombre string
+	fmt.Printf("Escriba su nombre: ")
+	fmt.Scanf("%s", &nombre)
+	fmt.Printf("Hola, %s\n",nombre)
+	fmt.Printf("Seleccione un número del siguiente menú:\n")
+	fmt.Printf("1. Crear una nueva base de datos.\n")
+	fmt.Printf("2. Crear las tablas.\n")
+	fmt.Printf("3. Completar las tablas.\n")
+	fmt.Printf("4. Asignar las PK y FK.\n")
+	fmt.Printf("5. Borrar las PK y FK.\n")
+	fmt.Printf("6. Crear las stored procedures y los triggers.\n")
+	fmt.Printf("7. Autorizar las compras.\n")
+	fmt.Printf("8. Generar el resumen de la compra.\n")
+	fmt.Printf("9. Generar BoldDB.\n")
+
 }
