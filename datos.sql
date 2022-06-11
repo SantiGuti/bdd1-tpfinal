@@ -1,3 +1,6 @@
+declare @vardate varchar(100)='01/01/2022'
+
+/*Insertamos datos de 20 clientes*/
 insert into cliente values(1, 'Juan', 'Rosas', 'Serano 701', '011-68943567'); 
 insert into cliente values(2, 'Martin', 'Valdez', 'Mendoza 293', '011-78908583'); 
 insert into cliente values(3, 'Nicolas', 'Sanchez', 'Pringles 1073', '011-33531935'); 
@@ -19,6 +22,7 @@ insert into cliente values(18, 'Jimena', 'Venditto', 'Gelly y Obes 941', '011-71
 insert into cliente values(19, 'Trinidad', 'Precedo', 'Urquiza 1284', '011-62026547'); 
 insert into cliente values(20, 'Delfina', 'Pacioni', 'Junin 2764', '011-35627028'); 
 
+/*Insertamos datos de 20 comercios*/
 insert into comercio values(01, 'Libreria El patito feo', 'Av. San Luis 1687', 'B1663HGK', '011-93155601');
 insert into comercio values(02, 'Heladeria Gustavo', 'Serrano 1523', 'B1722NHC', '011-97684470');
 insert into comercio values(03, 'Carniceria El cordero feliz', 'Ituzaingo 4896', 'B1669FUE', '011-40346435');
@@ -40,6 +44,7 @@ insert into comercio values(018, 'Rotiseria La dorada', 'Avellaneda 3712', 'B170
 insert into comercio values(019, 'Electrodomesticos Fraverino', 'El Churrinche 3084', 'B1834COJ', '011-74885170');
 insert into comercio values(020, 'Casa de ropa Mimo', 'Derqui 946', 'B1804EMT', '011-74777097');
 
+/*Insertamos datos de las tarjetas de los clientes*/
 insert into tarjeta values(4756326984155476, 1, '201807', '202301', '6713', 500000.00, 'vigente');
 insert into tarjeta values(4532969538877007, 2, '202003', '202504', '6646', 200000.00, 'suspendida');
 insert into tarjeta values(4929941716451245, 3, '202204', '202702', '2312', 100000.00, 'vigente');
@@ -64,14 +69,8 @@ insert into tarjeta values(5203094647795928, 19, '202006', '202404', '4529', 150
 insert into tarjeta values(2720409166266195, 20, '202102', '202512', '1252', 150000.00, 'vigente');
 --Cliente 6 y 11 tienen dos tarjetas
 
+/*Insertamos datos de los cierres de todas las tarjetas para el año 2022.*/
+insert into cierre values(2018,07,5476,09/01/2022,30/01/2022,08/02/2022) /*Hay que ver si está bien tomado el date*/
+
+/*Insertamos datos de consumo para realizar pruebas*/
 insert into consumo values(4756326984155476, '6713', 015, 2000.00); --consumo válido 
-
---insert into cierre values();
-
---La tabla cierre deberá tener los cierres de las tarjetas para todo el año 2022.
-
-
-
-
-
-
