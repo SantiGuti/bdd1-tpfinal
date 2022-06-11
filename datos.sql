@@ -39,7 +39,6 @@ insert into comercio values(017, 'Kiosco Los amigos', 'Italia 473', 'B1663NXJ', 
 insert into comercio values(018, 'Rotiseria La dorada', 'Avellaneda 3712', 'B1708GHY', '011-51365309');
 insert into comercio values(019, 'Electrodomesticos Fraverino', 'El Churrinche 3084', 'B1834COJ', '011-74885170');
 insert into comercio values(020, 'Casa de ropa Mimo', 'Derqui 946', 'B1804EMT', '011-74777097');
---nrocomercio de 2 digitos para hacerlo distintivo al del cliente?
 
 insert into tarjeta values(4756326984155476, 1, '201807', '202301', '6713', 500000.00, 'vigente');
 insert into tarjeta values(4532969538877007, 2, '202003', '202504', '6646', 200000.00, 'suspendida');
@@ -68,6 +67,7 @@ insert into tarjeta values(2720409166266195, 20, '202102', '202512', '1252', 150
 insert into consumo values(4756326984155476, '6713', 015, 2000.00); --consumo válido 
 
 --insert into cierre values();
+
 --La tabla cierre deberá tener los cierres de las tarjetas para todo el año 2022.
 
 
