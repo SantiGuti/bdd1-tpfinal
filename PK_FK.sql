@@ -8,6 +8,7 @@ alter table cierre	add constraint cierre_pk	primary key (año, mes, terminacion)
 alter table cabecera add constraint cabecera_pk	primary key (nroresumen);
 alter table detalle	add constraint detalle_pk	primary key (nroresumen, nrolinea);
 alter table alerta	add constraint alerta_pk	primary key (nroalerta);
+
 /*FOREIGN KEYS*/
 alter table tarjeta add constraint tarjeta_fk foreign key (nrocliente) references cliente (nrocliente);
 alter table compra add constraint compra_fk foreign key (nrotarjeta) references tarjeta (nrotarjeta);
@@ -22,3 +23,20 @@ alter table consumo add constraint consumo_fk foreign key (nrotarjeta) reference
 alter table consumo add constraint consumo_fk foreign key (codseguridad) references tarjeta (codseguridad);
 alter table consumo add constraint consumo_fk foreign key (nrocomercio) references comercio (nrocomercio);
 alter table consumo add constraint consumo_fk foreign key (monto) references compra (monto);
+
+/*alter table tarjeta add constraint tarjeta_nrocliente_fk foreign key (nrocliente) references cliente (nrocliente);
+alter table compra add constraint compra_nrotarjeta_fk foreign key (nrotarjeta) references tarjeta (nrotarjeta);
+alter table compra add constraint compra_nrocomercio_fk foreign key (nrocomercio) references comercio (nrocomercio);
+alter table rechazo add constraint rechazo_nrotarjeta_fk foreign key (nrotarjeta) references tarjeta (nrotarjeta);
+alter table rechazo add constraint rechazo_nrocomercio_fk foreign key (nrocomercio) references comercio (nrocomercio);
+alter table cabecera add constraint cabecera_nrotarjeta_fk foreign key (nrotarjeta) references tarjeta (nrotarjeta);
+alter table detalle add constraint detalle_nombrecomercio_fk foreign key (nombrecomercio) references comercio (nombre);
+alter table detalle add constraint detalle_monto_fk foreign key (monto) references compra (monto);
+alter table alerta add constraint alerta_nrotarjeta_fk foreign key (nrotarjeta) references tarjeta (nrotarjeta);
+alter table alerta add constraint alerta_nrorechazo_fk foreign key (nrorechazo) references rechazo (nrorechazo);
+alter table consumo add constraint consumo_nrotarjeta_fk foreign key (nrotarjeta) references tarjeta (nrotarjeta);
+alter table consumo add constraint consumo_codseguridad_fk foreign key (codseguridad) references tarjeta (codseguridad);
+alter table consumo add constraint consumo_nrocomercio_fk foreign key (nrocomercio) references comercio (nrocomercio);
+alter table consumo add constraint consumo_monto_fk foreign key (monto) references compra (monto);*/
+
+

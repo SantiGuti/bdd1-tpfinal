@@ -1,4 +1,4 @@
-declare @vardate varchar(100)='01/01/2022'
+--declare @vardate varchar(100)='01/01/2022'
 
 /*Insertamos datos de 20 clientes*/
 insert into cliente values(1, 'Juan', 'Rosas', 'Serano 701', '011-68943567'); 
@@ -70,7 +70,17 @@ insert into tarjeta values(2720409166266195, 20, '202102', '202512', '1252', 150
 --Cliente 6 y 11 tienen dos tarjetas
 
 /*Insertamos datos de los cierres de todas las tarjetas para el año 2022.*/
-insert into cierre values(2018,07,5476,09/01/2022,30/01/2022,08/02/2022) /*Hay que ver si está bien tomado el date*/
+--las fechas tienen que ser distintas para cada terminación 
+--cada terminacion va a tener para cada periodo un cierre distinto
+
+--insert into cierre values(2018,07,5476,09/01/2022,30/01/2022,08/02/2022) /*Hay que ver si está bien tomado el date*/
+insert into cierre values(2022,01,0,'2022-01-09','2022-01-30','2022-02-08');
+
+insert into cierre values(2022,06,5, '2022-06-11', '2022-07-11', '2022-07-25'); 
+insert into cierre values(2022,06,9, '2022-06-06', '2022-07-06', '2022-07-15');
+
+
+
 
 /*Insertamos datos de consumo para realizar pruebas*/
 insert into consumo values(4756326984155476, '6713', 015, 2000.00); --consumo válido 
