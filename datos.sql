@@ -41,10 +41,31 @@ insert into comercio values(019, 'Electrodomesticos Fraverino', 'El Churrinche 3
 insert into comercio values(020, 'Casa de ropa Mimo', 'Derqui 946', 'B1804EMT', '011-74777097');
 --nrocomercio de 2 digitos para hacerlo distintivo al del cliente?
 
-insert into tarjeta values(4756326984155476, 1, '202201', '202405', '6713', 150000.00, 'vigente');
---Todes les clientes tendrán una tarjeta, excepto dos clientes que tendrán dos tarjetas cada une. Una tarjeta deberá estar expirada en su fecha de vencimiento.
+insert into tarjeta values(4756326984155476, 1, '201807', '202301', '6713', 500000.00, 'vigente');
+insert into tarjeta values(4532969538877007, 2, '202003', '202504', '6646', 200000.00, 'suspendida');
+insert into tarjeta values(4929941716451245, 3, '202204', '202702', '2312', 100000.00, 'vigente');
+insert into tarjeta values(4823836840552412, 4, '202105', '202612', '8748', 250000.00, 'vigente');
+insert into tarjeta values(4556919139852637, 5, '202012', '202506', '3354', 100000.00, 'vigente');
+insert into tarjeta values(4024007184081593, 6, '201910', '202304', '5737', 135000.00, 'vigente');
+insert into tarjeta values(5130558181821199, 6, '202002', '202405', '6997', 400000.00, 'vigente');
+insert into tarjeta values(5251225878053659, 7, '202004', '202511', '6843', 250000.00, 'anulada');
+insert into tarjeta values(5588490230236186, 8, '201710', '202212', '4930', 75000.00, 'vigente');
+insert into tarjeta values(2720849190484829, 9, '201902', '202512', '4983', 400000.00, 'vigente');
+insert into tarjeta values(5264727143830907, 10, '202201', '202705', '8469', 250000.00, 'vigente');
+insert into tarjeta values(4929597785365045, 11, '201705', '202202', '6235', 75000.00, 'vigente'); --expirada
+insert into tarjeta values(5124534106465188, 11, '202102', '202606', '4682', 135000.00, 'vigente');
+insert into tarjeta values(4539106380553039, 12, '201805', '202308', '8655', 175000.00, 'vigente');
+insert into tarjeta values(4261606383765195, 13, '201904', '202304', '3763', 500000.00, 'vigente');
+insert into tarjeta values(4556365787429825, 14, '202005', '202510', '6331', 150000.00, 'suspendida');
+insert into tarjeta values(4532474142653407, 15, '202202', '202709', '3018', 120000.00, 'vigente');
+insert into tarjeta values(4539722778151788, 16, '202204', '202601', '9123', 150000.00, 'vigente');
+insert into tarjeta values(5543040397793513, 17, '202111', '202604', '4172', 300000.00, 'vigente');
+insert into tarjeta values(5331682396107249, 18, '201909', '202412', '5390', 100000.00, 'vigente');
+insert into tarjeta values(5203094647795928, 19, '202006', '202404', '4529', 150000.00, 'anulada');
+insert into tarjeta values(2720409166266195, 20, '202102', '202512', '1252', 150000.00, 'vigente');
+--Cliente 6 y 11 tienen dos tarjetas
 
-insert into consumo values(4756326984155476, '6713', 15, 2000.00); --consumo válido 
+insert into consumo values(4756326984155476, '6713', 015, 2000.00); --consumo válido 
 
 --insert into cierre values();
 --La tabla cierre deberá tener los cierres de las tarjetas para todo el año 2022.
