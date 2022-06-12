@@ -1,5 +1,3 @@
---declare @vardate varchar(100)='01/01/2022'
-
 /*Insertamos datos de 20 clientes*/
 insert into cliente values(1, 'Juan', 'Rosas', 'Serano 701', '011-68943567'); 
 insert into cliente values(2, 'Martin', 'Valdez', 'Mendoza 293', '011-78908583'); 
@@ -69,18 +67,43 @@ insert into tarjeta values(5203094647795928, 19, '202006', '202404', '4529', 150
 insert into tarjeta values(2720409166266195, 20, '202102', '202512', '1252', 150000.00, 'vigente');
 --Cliente 6 y 11 tienen dos tarjetas
 
+/*Creamos 5 compras*/
+insert into compra values(4312456745, 4756326984155476, 012, '2022-05-08 12:38:05', 6000.00, true); --Compra válida
+insert into compra values(4668766876, 4532969538877007, 010, '2022-05-12 10:32:58', 10000.00, false); --Compra rehazada por tarjeta suspendida
+insert into compra values(9878965778, 5203094647795928, 01, '2022-04-28 17:51:03', 12000.00, false); --Compra rechazada por tarjeta anulada
+insert into compra values(2732894023, 4929597785365045,011, '2022-06-01 13:04:56', 4000.00, false); --Compra rechazada por tarjeta expirada
+insert into compra values(2318278782, 5588490230236186, 013, '2022-05-23 14:27:06', 76000.00, false); --Compra rechazada por límite de compra de tarjeta excedido
+
+/*Creamos 4 rechazos de compra*/
+insert into rechazo values(46878767, 4532969538877007, 010, '2022-05-12 10:32:58', 10000.00, "La tarjeta se encuentra actualmente suspendida.");
+insert into rechazo values(32423423, 5203094647795928, 01, '2022-04-28 17:51:03', 12000.00, "La tarjeta se encuentra actualmente anulada.");
+insert into rechazo values(34647372, 4929597785365045,011, '2022-06-01 13:04:56', 4000.00, "La tarjeta se encuentra actualmente expirada.");
+insert into rechazo values(72637882, 5588490230236186, 013, '2022-05-23 14:27:06', 76000.00, "El monto supera el límite de compra de la tarjeta.");
+
 /*Insertamos datos de los cierres de todas las tarjetas para el año 2022.*/
+insert into cierre values(2022,01,3,'2022-01-09','2022-01-30','2022-02-08');
+insert into cierre values(2022,06,5, '2022-06-11', '2022-07-11', '2022-07-25'); 
+insert into cierre values(2022,06,9, '2022-06-06', '2022-07-06', '2022-07-15');
 --las fechas tienen que ser distintas para cada terminación 
 --cada terminacion va a tener para cada periodo un cierre distinto
 
---insert into cierre values(2018,07,5476,09/01/2022,30/01/2022,08/02/2022) /*Hay que ver si está bien tomado el date*/
-insert into cierre values(2022,01,0,'2022-01-09','2022-01-30','2022-02-08');
+/*Insertamos los datos de cabecera del resumen*/
+insert into cabecera values(234234234, 'Juan', 'Rosas', 'Serano 701', 4756326984155476, '2022-01-09','2022-01-30','2022-02-08', 6000.00);
 
-insert into cierre values(2022,06,5, '2022-06-11', '2022-07-11', '2022-07-25'); 
-insert into cierre values(2022,06,9, '2022-06-06', '2022-07-06', '2022-07-15');
+/*Insertamos los datos de detalle del resumen*/
+insert into detalle values(234234234, 4757990, '2022-05-08 12:38:05', 'Farmacia San luis', 6000.00);
 
-
-
+/*Insertamos los datos de alerta a los clientes*/
+insert into alerta values(354566, 4532969538877007, '2022-05-12 10:32:58', 46878767, 4689, "Estimado cliente, le informamos que su compra ha sido rechazada ya que su tarjeta se encuentra actualmente suspendida.");
+insert into alerta values(242424, 5203094647795928, '2022-04-28 17:51:03', 32423423, 3234, "Estimado cliente, le informamos que su compra ha sido rechazada ya que su tarjeta se encuentra actualmente anulada.");
+insert into alerta values(432543, 4929597785365045, '2022-06-01 13:04:56', 34647372, 5654, "Estimado cliente, le informamos que su compra ha sido rechazada ya que su tarjeta se encuentra actualmente expirada.");
+insert into alerta values(565768, 5588490230236186, '2022-05-23 14:27:06', 72637882, 9866, "Estimado cliente, le informamos que su compra ha sido rechazada ya que su tarjeta ha superado el límite de compra.");
 
 /*Insertamos datos de consumo para realizar pruebas*/
-insert into consumo values(4756326984155476, '6713', 015, 2000.00); --consumo válido 
+insert into consumo values(4756326984155476, '6713', 015, 2000.00); --Consumo válido 
+insert into consumo values(2720409166263545, '1252', 015, 2000.00); --Número de tarjeta inexistente
+insert into consumo values(5203094647795928, '4529', 08, 1000.00); --Tarjeta no vigente
+insert into consumo values(4532969538877007, '6640', 09, 1000.00); --Código de seguridad incorrecto
+insert into consumo values(2720849190484829, '4983', 012, 45000.00); --Límite de compra superado
+insert into consumo values(4929597785365045, '6235', 011, 500.00); --Tarjeta vencida
+insert into consumo values(4556365787429825, '6331', 04, 1000.00); --Tarjeta suspendida
