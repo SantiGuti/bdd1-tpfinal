@@ -62,7 +62,7 @@ func main() {
 	if selec == 2 {
 		fmt.Printf("\nUsted ha seleccionado la opción 2: Crear las tablas.\n")
 		fmt.Printf("\nPor favor espere...\n\n")
-		_, err = db.Query(mostrarDatos("tablas.sql")) //Ver error
+		_, err = db.Query(mostrarDatos("tablas.sql"))
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -72,7 +72,13 @@ func main() {
 	if selec == 3 {
 		fmt.Printf("\nUsted ha seleccionado la opción 3: Completar las tablas.\n")
 		fmt.Printf("\nPor favor espere...\n")
-
+		//LEE LOS DATOS DE LA TABLA CLIENTE
+		fmt.Printf("\nLeyendo la tabla de datos...\n")
+		_, err = db.Query(leerArchivo("datos.sql"))
+		//Presenta error a partir de este punto. Ver solución. Error: integer out of range
+		if err != nil {
+			log.Fatal(err)
+		}
 		//IMPRIME POR PANTALLA LA TABLA CLIENTE
 		fmt.Printf("\nDatos de la tabla cliente:\n\n")
 		rows, err := db.Query(`select * from cliente`)
@@ -98,16 +104,16 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		defer row.Close()
+		defer rows.Close()
 		//Scan de los datos contenidos en la tabla
 		var t tarjeta
 		for row.Next() {
-			if err := row.Scan(&t.nrotarjeta, &t.nrocliente, &t.validadesde, &t.validahasta, &t.codseguridad, &t.limitecompra, &t.estado); err != nil {
+			if err := rows.Scan(&t.nrotarjeta, &t.nrocliente, &t.validadesde, &t.validahasta, &t.codseguridad, &t.limitecompra, &t.estado); err != nil {
 				log.Fatal(err)
 			}
 			fmt.Printf("%v %v %v %v %v %v %v\n", t.nrotarjeta, t.nrocliente, t.validadesde, t.validahasta, t.codseguridad, t.limitecompra, t.estado)
 		}
-		if err = row.Err(); err != nil {
+		if err = rows.Err(); err != nil {
 			log.Fatal(err)
 		}
 	}
@@ -115,11 +121,13 @@ func main() {
 	//OPCIÓN 4: ASIGNAR LAS PRIMARY KEYS Y FOREIGN KEYS.
 	if selec == 4 {
 		fmt.Printf("\nUsted ha seleccionado la opción 4: Asignar las PK y FK.\n")
-		_, err = db.Query(mostrarDatos("PK_FK.sql")) 
+		/*_, err = db.Query(mostrarDatos("PK_FK.sql")) 
 		if err != nil {
 			log.Fatal(err)
-		}
-		//Ver como resolverlo	
+		}*/
+		//Imprime los datos pero no funciona bien. Error: there ir no unique constraint matching given keys for referenced table "comercio"	
+		fmt.Printf("\nSe asignará la primary key a la tabla cliente:\n")
+		_, err = db.Exec(`alter table cliente add constraint cliente_pk primary key (nrocliente)`)
 	}
 
 	//OPCIÓN 5: BORRAR LAS PRIMARY KEYS Y FOREIGN KEYS.
@@ -129,7 +137,11 @@ func main() {
 		var selec1 int
 		fmt.Scanln(&selec1)
 		if selec1 == 1 {
-			_, err = db.Exec(`delete from cliente where `)
+			_, err = db.Exec(`alter table cliente drop primary key`)
+		}
+		_, err = db.Query(mostrarDatos("PK_FK.sql")) 
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 
@@ -143,6 +155,16 @@ func main() {
 	//OPCIÓN 7: GENERAR EL RESUMEN DE LAS COMPRAS.
 	if selec == 7 {
 		fmt.Printf("\nUsted ha seleccionado la opción 7: Generar el resumen de las compras.\n")
+		fmt.Printf("\nPor favor, ingrese el número de cliente:")
+		var nrocli int
+		fmt.Scanf("%s", &nrocli)
+		fmt.Printf("\nIngrese el periodo del año que desea generar el resumen:")
+		//var periodo string
+		//fmt.Scanf("%s", &periodo)
+		_, err = db.Query(`select nrocliente from cliente where nrocliente == &nrocli`)
+		_, err = db.Query(`select `)
+		_, err = db.Exec(`insert into cabecera values()`)
+		_, err = db.Exec(`insert into detalle values()`)		
 	}
 
 	//OPCIÓN 8: GENERAR ALERTAS A LOS CLIENTES.
@@ -193,6 +215,7 @@ func mostrarDatos(archivo string) string {
 	ret := string(tablas)
 	return ret
 }
+
 func menu(){
 	fmt.Printf("1. Crear una nueva base de datos.\n")
 	fmt.Printf("2. Crear las tablas.\n")
