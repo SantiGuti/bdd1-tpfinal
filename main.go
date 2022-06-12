@@ -24,15 +24,23 @@ type tarjeta struct {
 	estado string
 }
 
+type comercio struct{
+	nrocomercio int
+	nombre string
+	domicilio string
+	codigopostal int
+	telefono int
+}
+
 func main() {
-	//Abre la conexión a la base de datos
+	//ABRE LA CONEXIÓN A LA BASE DE DATOS.
 	db, err := sql.Open("postgres", "user=postgres host=localhost dbname=tarjetascredito sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 
-	//Despliega el menú visible al usuario
+	//MUESTRA UN MENÚ VISIBLE PARA EL USUARIO.
 	var nombre string
 	fmt.Printf("Escriba su nombre: ")
 	fmt.Scanf("%s", &nombre)
@@ -42,7 +50,7 @@ func main() {
 	var selec int
 	fmt.Scanln(&selec)
 
-	//OPCIÓN 1
+	//OPCIÓN 1: CREAR UNA BASE DE DATOS.
 	if selec == 1 {
 		fmt.Printf("Usted ha seleccionado la opción 1: Crear una base de datos.\n")
 		fmt.Printf("Por favor espere...")
@@ -50,7 +58,7 @@ func main() {
 		createDatabase()
 	}
 	
-	//OPCIÓN 2
+	//OPCIÓN 2: CREAR LAS TABLAS.
 	if selec == 2 {
 		fmt.Printf("\nUsted ha seleccionado la opción 2: Crear las tablas.\n")
 		fmt.Printf("\nPor favor espere...\n\n")
@@ -60,10 +68,11 @@ func main() {
 		}
 	}
 	
-	//OPCIÓN 3
+	//OPCIÓN 3: CARGAR LOS DATOS.
 	if selec == 3 {
 		fmt.Printf("\nUsted ha seleccionado la opción 3: Completar las tablas.\n")
 		fmt.Printf("\nPor favor espere...\n")
+
 		//IMPRIME POR PANTALLA LA TABLA CLIENTE
 		fmt.Printf("\nDatos de la tabla cliente:\n\n")
 		rows, err := db.Query(`select * from cliente`)
@@ -82,6 +91,7 @@ func main() {
 		if err = rows.Err(); err != nil {
 			log.Fatal(err)
 		}
+
 		//IMPRIME POR PANTALLA LA TABLA TARJETA
 		fmt.Printf("\nDatos de la tabla tarjeta:\n\n") 
 		row, err := db.Query(`select * from tarjeta`)
@@ -102,40 +112,47 @@ func main() {
 		}
 	}
 
-	//OPCIÓN 4
+	//OPCIÓN 4: ASIGNAR LAS PRIMARY KEYS Y FOREIGN KEYS.
 	if selec == 4 {
 		fmt.Printf("\nUsted ha seleccionado la opción 4: Asignar las PK y FK.\n")
-				
+		_, err = db.Query(mostrarDatos("PK_FK.sql")) 
+		if err != nil {
+			log.Fatal(err)
+		}
+		//Ver como resolverlo	
 	}
 
-	//OPCIÓN 5
+	//OPCIÓN 5: BORRAR LAS PRIMARY KEYS Y FOREIGN KEYS.
 	if selec == 5 {
 		fmt.Printf("\nUsted ha seleccionado la opción 5: Borrar las PK y FK.\n")
+		fmt.Printf("Si desea eliminar las PK, presione 1. Si desea eliminar las FK, presione 2.\n")
+		var selec1 int
+		fmt.Scanln(&selec1)
+		if selec1 == 1 {
+			_, err = db.Exec(`delete from cliente where `)
+		}
 	}
 
-	//OPCIÓN 6
+	//OPCIÓN 6: AUTORIZAR LAS COMPRAS.
 	if selec == 6 {
-		fmt.Printf("\nUsted ha seleccionado la opción 6: Crear las stored procedures y los triggers.\n")
+		fmt.Printf("\nUsted ha seleccionado la opción 6: Autorizar las compras.\n")
+		//Tomo 7 casos de consumo para abarcar todas las posibilidades.
+		
 	}
 
-	//OPCIÓN 7
+	//OPCIÓN 7: GENERAR EL RESUMEN DE LAS COMPRAS.
 	if selec == 7 {
-		fmt.Printf("\nUsted ha seleccionado la opción 7: Autorizar las compras.\n")
+		fmt.Printf("\nUsted ha seleccionado la opción 7: Generar el resumen de las compras.\n")
 	}
 
-	//OPCIÓN 8
+	//OPCIÓN 8: GENERAR ALERTAS A LOS CLIENTES.
 	if selec == 8 {
-		fmt.Printf("\nUsted ha seleccionado la opción 8: Generar el resumen de la compra.\n")
+		fmt.Printf("\nUsted ha seleccionado la opción 8: Generar alertas a los clientes.\n")
 	}
 
-	//OPCIÓN 9
+	//OPCIÓN 9: GENERAR DATOS EN BOLDDB.
 	if selec == 9 {
-		fmt.Printf("\nUsted ha seleccionado la opción 9: Mostrar alertas a clientes.\n")
-	}
-
-	//OPCIÓN 10
-	if selec == 10 {
-		fmt.Printf("\nUsted ha seleccionado la opción 10: Generar datos en BoldDB.\n")
+		fmt.Printf("\nUsted ha seleccionado la opción 9: Generar datos en BoldDB.\n")
 	}
 }
 
@@ -182,9 +199,8 @@ func menu(){
 	fmt.Printf("3. Completar las tablas.\n")
 	fmt.Printf("4. Asignar las PK y FK.\n")
 	fmt.Printf("5. Borrar las PK y FK.\n")
-	fmt.Printf("6. Crear las stored procedures y los triggers.\n")
-	fmt.Printf("7. Autorizar las compras.\n")
-	fmt.Printf("8. Generar el resumen de la compra.\n")
-	fmt.Printf("9. Mostrar alertas a clientes.\n")
-	fmt.Printf("10. Generar datos en BoldDB.\n")
+	fmt.Printf("6. Autorizar las compras.\n")
+	fmt.Printf("7. Generar el resumen de las compra.\n")
+	fmt.Printf("8. Generar alertas a clientes.\n")
+	fmt.Printf("9. Generar datos en BoldDB.\n")
 }
