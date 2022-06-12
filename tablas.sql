@@ -9,11 +9,11 @@ create table cliente(
 create table tarjeta(
 	nrotarjeta char(16),
 	nrocliente int,
-	validadesde char(6), --e.g. 201106
+	validadesde char(6), 
 	validahasta char(6),
 	codseguridad char(4),
 	limitecompra decimal(8,2),
-	estado char(10) --`vigente', `suspendida', `anulada'
+	estado char(10) 
 );
 
 create table comercio(
@@ -76,12 +76,9 @@ create table alerta(
 	nrotarjeta char(16),
 	fecha timestamp,
 	nrorechazo int,
-	codalerta int, --0:rechazo, 1:compra 1min, 5:compra 5min, 32:límite
+	codalerta int, 
 	descripcion text
 );
-
--- Esta tabla *no* es parte del modelo de datos, pero se incluye para
--- poder probar las funciones.
 
 create table consumo(
 	nrotarjeta char(16),
@@ -89,9 +86,3 @@ create table consumo(
 	nrocomercio int,
 	monto decimal(7,2)
 );
-
-
-
-
-
-
