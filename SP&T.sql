@@ -2,6 +2,7 @@ create function aut_compras(vnrotarjeta char(16), vcodseguridad char(4), vnrocom
 declare
     resultado record;
     suma decimal(15,2);
+    
 
 begin
 
@@ -33,11 +34,11 @@ begin
         return false;
     end if;
         
-    /*select * into resultado from tarjeta t where (t.nrotarjeta = vnrotarjeta) AND CAST(t.validahasta AS DATE) < CURRENT_DATE;
-    if not found then
+    select * into resultado from tarjeta t where (t.nrotarjeta = vnrotarjeta) AND TO_DATE(t.validahasta, 'YYYYMM') < CURRENT_DATE;
+    if found then
         insert into rechazo values(4, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Plazo de vigencia expirado.');
         return false;
-    end if;*/
+    end if;
 
     raise notice 'Compra aceptada.';
     insert into compra values (6, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, true);
