@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+
 	_ "github.com/lib/pq"
 )
 
@@ -21,11 +22,12 @@ type tarjeta struct {
 	estado 		 												   string
 }
 
-type comercio struct{
-	nrocomercio  	  int
-	nombre, domicilio string
+type comercio struct {
+	nrocomercio  int
+	nombre       string
+	domicilio    string
 	codigopostal int
-	telefono string
+	telefono     int
 }
 
 //FUNCIÓN MAIN
@@ -54,7 +56,7 @@ func main() {
 		//Crea una nueva base de datos
 		createDatabase()
 	}
-	
+
 	//OPCIÓN 2: CREAR LAS TABLAS.
 	if selec == 2 {
 		fmt.Printf("\nUsted ha seleccionado la opción 2: Crear las tablas.\n")
@@ -64,7 +66,7 @@ func main() {
 			log.Fatal(err)
 		}
 	}
-	
+
 	//OPCIÓN 3: CARGAR LOS DATOS.
 	if selec == 3 {
 		fmt.Printf("\nUsted ha seleccionado la opción 3: Completar las tablas.\n")
@@ -96,7 +98,7 @@ func main() {
 		}
 
 		//IMPRIME POR PANTALLA LA TABLA TARJETA
-		fmt.Printf("\nDatos de la tabla tarjeta:\n\n") 
+		fmt.Printf("\nDatos de la tabla tarjeta:\n\n")
 		row, err := db.Query(`select * from tarjeta`)
 		if err != nil {
 			log.Fatal(err)
@@ -118,11 +120,11 @@ func main() {
 	//OPCIÓN 4: ASIGNAR LAS PRIMARY KEYS Y FOREIGN KEYS.
 	if selec == 4 {
 		fmt.Printf("\nUsted ha seleccionado la opción 4: Asignar las PK y FK.\n")
-		/*_, err = db.Query(mostrarDatos("PK_FK.sql")) 
+		/*_, err = db.Query(mostrarDatos("PK_FK.sql"))
 		if err != nil {
 			log.Fatal(err)
 		}*/
-		//Imprime los datos pero no funciona bien. Error: there ir no unique constraint matching given keys for referenced table "comercio"	
+		//Imprime los datos pero no funciona bien. Error: there ir no unique constraint matching given keys for referenced table "comercio"
 		fmt.Printf("\nSe asignará la primary key a la tabla cliente:\n")
 		_, err = db.Exec(`alter table cliente add constraint cliente_pk primary key (nrocliente)`)
 	}
@@ -136,7 +138,7 @@ func main() {
 		if selec1 == 1 {
 			_, err = db.Exec(`alter table cliente drop primary key`)
 		}
-		_, err = db.Query(mostrarDatos("PK_FK.sql")) 
+		_, err = db.Query(mostrarDatos("PK_FK.sql"))
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -146,7 +148,7 @@ func main() {
 	if selec == 6 {
 		fmt.Printf("\nUsted ha seleccionado la opción 6: Autorizar las compras.\n")
 		//Tomo 7 casos de consumo para abarcar todas las posibilidades.
-		
+
 	}
 
 	//OPCIÓN 7: GENERAR EL RESUMEN DE LAS COMPRAS.
@@ -159,6 +161,12 @@ func main() {
 		var fecha string
 		fmt.Scanf("%s", &fecha)
 		_, err = db.Query(`select t.nrocliente, t.nrotarjeta, c.fecha, sum(c.monto), c.nrotarjeta from tarjeta t, compra c where t.nrocliente == &nrocli && c.fecha == &fecha && t.nrotarjeta == c.nrotarjeta`)		
+		//var periodo string
+		//fmt.Scanf("%s", &periodo)
+		_, err = db.Query(`select nrocliente from cliente where nrocliente == &nrocli`)
+		_, err = db.Query(`select `)
+		_, err = db.Exec(`insert into cabecera values()`)
+		_, err = db.Exec(`insert into detalle values()`)
 	}
 
 	//OPCIÓN 8: GENERAR ALERTAS A LOS CLIENTES.
@@ -214,7 +222,7 @@ func mostrarDatos(archivo string) string {
 }
 
 //MENÚ VISIBLE AL USUARIO
-func menu(){
+func menu() {
 	fmt.Printf("1. Crear una nueva base de datos.\n")
 	fmt.Printf("2. Crear las tablas.\n")
 	fmt.Printf("3. Completar las tablas.\n")

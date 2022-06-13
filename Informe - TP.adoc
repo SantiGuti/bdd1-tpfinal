@@ -1,0 +1,22 @@
+= Base de Datos I: Trabajo Práctico
+Daniela Rages <daniela.rages95@gmail.com>; Melanie Belén Krujoski <melaniekrujoski@gmail.com>; Santiago Gutierrez <santiagogutierrez1905@gmail.com>; 
+v1, {12-06-2022}. Docentes Hernán Czemerinski y Hernán Rondelli (COM-01)
+:title-page:
+:numbered:
+:source-highlighter: coderay
+:tabsize: 4
+
+== Introducción
+
+El presente informe tiene como finalidad argumentar lo realizado en el trabajo práctico. El cual constiste en la creación de una base de datos que contiene información relativa a tarjetas de cŕedito.
+
+Para la creación de la base de datos, las tablas, la instancia de los datos, los stored procedures y triggers necesarios para simular y testear dicha base se realizará una aplicación CLI escrita en Go.
+
+Se utilizará una base de datos relacional en PostgreSQL y una base de datos NoSQL con el fin de compararlos. 
+
+== Descripción
+
+== Implementación
+
+== Conclusiones 
+
