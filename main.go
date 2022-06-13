@@ -35,7 +35,7 @@ type comercio struct {
 
 func main() {
 	//ABRE LA CONEXIÓN A LA BASE DE DATOS.
-	db, err := sql.Open("postgres", "user=postgres host=localhost dbname=tarjetascredito sslmode=disable")
+	db, err := sql.Open("postgres", "user=postgres host=localhost dbname=postgres sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -56,7 +56,7 @@ func main() {
 		fmt.Printf("Usted ha seleccionado la opción 1: Crear una base de datos.\n")
 		fmt.Printf("Por favor espere...")
 		//Crea una nueva base de datos
-		createDatabase()
+		createDatabase(db, err)
 	}
 
 	//OPCIÓN 2: CREAR LAS TABLAS.
@@ -179,13 +179,7 @@ func main() {
 	}
 }
 
-func createDatabase() {
-	db, err := sql.Open("postgres", "user=postgres host=localhost dbname=postgres sslmode=disable")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
-
+func createDatabase(db *sql.DB, err error) {
 	_, err = db.Exec(`drop database if exists tarjetascredito`)
 	if err != nil {
 		log.Fatal(err)
@@ -194,6 +188,11 @@ func createDatabase() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	db, err = sql.Open("postgres", "user=postgres host=localhost dbname=tarjetascredito sslmode=disable")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 	fmt.Printf("\nNueva base de datos creada.\n")
 }
 
