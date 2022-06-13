@@ -173,7 +173,7 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			_, err = db.Exec(`select aut_compras('4929941716451245', '2312', 09, 1000.00)`)
+			_, err = db.Exec(`select aut_compras('5588490230236186', '4930', 09, 75001.00)`)
 			if err != nil {
 				log.Fatal(err)
 			}

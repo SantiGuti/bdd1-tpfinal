@@ -1,6 +1,7 @@
 create function aut_compras(vnrotarjeta char(16), vcodseguridad char(4), vnrocomercio int, vmonto decimal(7, 2)) returns boolean as $$
 declare
     resultado record;
+    suma decimal(8,2);
 
 begin
 
@@ -21,14 +22,14 @@ begin
         insert into rechazo values(2, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Código de seguridad inválido.');
         return false;
     end if;
-    
-    /*
-    select nrotarjeta into resultado from compra c where c.pagado = false and c.nrotarjeta = vnrotarjeta (SUM(c.monto) + vmonto) > (select limitecompra from tarjeta where nrotarjeta = vnrotarjeta);
+
+    WITH suma AS (select sum(c.monto) from compra c where c.nrotarjeta = vnrotarjeta and c.pagado = false)
+    select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta and suma < t.limitecompra;
     if not found then
-        insert into rechazo values(8456, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, "supera limite de compra");
+        insert into rechazo values(7, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'supera limite de compra');
         return false;
     end if;
-
+    
     select * into resultado from tarjeta t where (t.codseguridad != vcodseguridad) AND CAST(t.validahasta AS DATE) < CURRENT_DATE;
     if not found then
         insert into rechazo values(4, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Plazo de vigencia expirado.');
