@@ -199,19 +199,16 @@ func main() {
 		//OPCIÓN 7: GENERAR EL RESUMEN DE LAS COMPRAS.
 		if selec == 7 {
 			fmt.Printf("\nUsted ha seleccionado la opción 7: Generar el resumen de las compras.\n")
+			_, err = db.Exec(`select generar_resumen(01, '2022-05')`)
+			if err != nil {
+				log.Fatal(err)
+			}
 			fmt.Printf("\nPor favor, ingrese el número de cliente: ")
 			var nrocli int
 			fmt.Scanf("%s", &nrocli)
 			fmt.Printf("\nIngrese el periodo del año que desea generar el resumen:")
 			var fecha string
 			fmt.Scanf("%s", &fecha)
-			_, err = db.Query(`select t.nrocliente, t.nrotarjeta, c.fecha, sum(c.monto), c.nrotarjeta from tarjeta t, compra c where t.nrocliente == &nrocli && c.fecha == &fecha && t.nrotarjeta == c.nrotarjeta`)
-			//var periodo string
-			//fmt.Scanf("%s", &periodo)
-			_, err = db.Query(`select nrocliente from cliente where nrocliente == &nrocli`)
-			_, err = db.Query(`select `)
-			_, err = db.Exec(`insert into cabecera values()`)
-			_, err = db.Exec(`insert into detalle values()`)
 		}
 
 		//OPCIÓN 8: GENERAR ALERTAS A LOS CLIENTES.

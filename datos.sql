@@ -92,7 +92,7 @@ insert into cierre values(2022,06,9, '2022-06-06', '2022-07-06', '2022-07-15');
 insert into cabecera values(234234234, 'Juan', 'Rosas', 'Serano 701', 4756326984155476, '2022-01-09','2022-01-30','2022-02-08', 6000.00);
 
 /*Insertamos los datos de detalle del resumen*/
-insert into detalle values(234234234, 4757990, '2022-05-08 12:38:05', 'Farmacia San luis', 6000.00);
+--insert into detalle values(234234234, 4757990, '2022-05-08 12:38:05', 'Farmacia San luis', 6000.00);
 
 /*Insertamos los datos de alerta a los clientes*/
 insert into alerta values(354566, 4532969538877007, '2022-05-12 10:32:58', 46878767, 4689, 'Estimado cliente, le informamos que su compra ha sido rechazada ya que su tarjeta se encuentra actualmente suspendida.');

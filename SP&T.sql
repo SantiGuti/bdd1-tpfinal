@@ -46,17 +46,28 @@ begin
 end;
 $$ language plpgsql;
 
-/*create function generarFactura(numclient int, periodo date) returns void as $$
+create function generarResumen(numclient int, periodo date) returns void as $$
 declare
-    nombreCliente text
-    apellidoCliente text
-    direccionCliente text
-    nrotarjeta char(16)
-    fechaVencimiento date
-    totalAPagar decimal (8,2)
-
+    -- nombreCliente text
+    -- apellidoCliente text
+    -- direccionCliente text
+    nrotarjeta char(16);
+    -- fechaVencimiento date
+    -- totalAPagar decimal (8,2)
+    result record;
+    suma decimal(8, 2);
+    nombrecomercio text;
 begin
-    
+    select c.nrotarjeta into nrotarjeta from cliente cl where cl.numclient = numclient;
+    select sum(c.monto) into suma from compra co where co.nrotarjeta = nrotarjeta and co.fecha = periodo and co.pagado = true;
+    select * into result from cliente c where c.numclient = numclient;
+    if found then
+        insert into cabecera(54, result.nombre, result.apellido, result.domicilio, nrotarjeta, date_trunc('month', periodo), date_trunc('month', periodo), date_trunc('month', periodo), suma);
+    end if;
+    for row in select * from compra com where com.nrotarjeta = nrotarjeta and com.fecha = periodo and com.pagado = true LOOP;
+        select comercio.nombrecomercio into nombrecomercio from comercio where comercio.nrocomercio = com.nrocomercio;
+        insert into detalle(54, row, c.fecha, nombrecomercio, c.monto);
+    end loop;
 
 end;
-$$ language plpgsql;*/
+$$ language plpgsql;
