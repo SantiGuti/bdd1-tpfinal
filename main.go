@@ -71,6 +71,27 @@ func main() {
 			}
 		}
 
+<<<<<<< HEAD
+		//IMPRIME POR PANTALLA LA TABLA TARJETA
+		fmt.Printf("\nDatos de la tabla tarjeta:\n\n")
+		row, err := db.Query(`select * from tarjeta`)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer rows.Close()
+		//Scan de los datos contenidos en la tabla
+		var t tarjeta
+		for row.Next() {
+			if err := row.Scan(&t.nrotarjeta, &t.nrocliente, &t.validadesde, &t.validahasta, &t.codseguridad, &t.limitecompra, &t.estado); err != nil {
+				log.Fatal(err)
+			}
+			fmt.Printf("%v %v %v %v %v %v %v\n", t.nrotarjeta, t.nrocliente, t.validadesde, t.validahasta, t.codseguridad, t.limitecompra, t.estado)
+		}
+		if err = row.Err(); err != nil {
+			log.Fatal(err)
+		}
+	}
+=======
 		//OPCIÓN 3: CARGAR LOS DATOS.
 		if selec == 3 {
 			fmt.Printf("\nUsted ha seleccionado la opción 3: Completar las tablas.\n")
@@ -100,6 +121,7 @@ func main() {
 			if err = rows.Err(); err != nil {
 				log.Fatal(err)
 			}
+>>>>>>> 5a8a309dd8944fc2abad6b85fbfe2d55b4a431a7
 
 			//IMPRIME POR PANTALLA LA TABLA TARJETA
 			fmt.Printf("\nDatos de la tabla tarjeta:\n\n")
@@ -155,6 +177,25 @@ func main() {
 
 		}
 
+<<<<<<< HEAD
+	//OPCIÓN 7: GENERAR EL RESUMEN DE LAS COMPRAS.
+	if selec == 7 {
+		fmt.Printf("\nUsted ha seleccionado la opción 7: Generar el resumen de las compras.\n")
+		fmt.Printf("\nPor favor, ingrese el número de cliente: ")
+		var nrocli int
+		fmt.Scanf("%s", &nrocli)
+		fmt.Printf("\nIngrese el periodo del año que desea generar el resumen:")
+		var fecha string
+		fmt.Scanf("%s", &fecha)
+		_, err = db.Query(`select t.nrocliente, t.nrotarjeta, c.fecha, sum(c.monto), c.nrotarjeta from tarjeta t, compra c where t.nrocliente == &nrocli && c.fecha == &fecha && t.nrotarjeta == c.nrotarjeta`)
+		//var periodo string
+		//fmt.Scanf("%s", &periodo)
+		_, err = db.Query(`select nrocliente from cliente where nrocliente == &nrocli`)
+		_, err = db.Query(`select `)
+		_, err = db.Exec(`insert into cabecera values()`)
+		_, err = db.Exec(`insert into detalle values()`)
+	}
+=======
 		//OPCIÓN 7: GENERAR EL RESUMEN DE LAS COMPRAS.
 		if selec == 7 {
 			fmt.Printf("\nUsted ha seleccionado la opción 7: Generar el resumen de las compras.\n")
@@ -172,6 +213,7 @@ func main() {
 			_, err = db.Exec(`insert into cabecera values()`)
 			_, err = db.Exec(`insert into detalle values()`)
 		}
+>>>>>>> 5a8a309dd8944fc2abad6b85fbfe2d55b4a431a7
 
 		//OPCIÓN 8: GENERAR ALERTAS A LOS CLIENTES.
 		if selec == 8 {
