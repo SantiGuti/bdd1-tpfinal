@@ -33,7 +33,7 @@ type comercio struct {
 //FUNCIÓN MAIN
 func main() {
 	//ABRE LA CONEXIÓN A LA BASE DE DATOS.
-	db, err := sql.Open("postgres", "user=postgres host=localhost dbname=postgres sslmode=disable")
+	db, err := sql.Open("postgres", "user=postgres host=localhost dbname=tarjetascredito sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
