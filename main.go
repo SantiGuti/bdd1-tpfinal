@@ -8,6 +8,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
+//DEFINIMOS LOS TIPOS DE DATOS
 type cliente struct {
 	nrocliente                  int
 	nombre, apellido, domicilio string
@@ -15,23 +16,19 @@ type cliente struct {
 }
 
 type tarjeta struct {
-	nrotarjeta int
-	nrocliente int
-	validadesde int
-	validahasta int
-	codseguridad int
-	limitecompra float64
-	estado string
+	nrotarjeta, nrocliente, validadesde, validahasta, codseguridad int
+	limitecompra 												   float64
+	estado 		 												   string
 }
 
 type comercio struct{
-	nrocomercio int
-	nombre string
-	domicilio string
+	nrocomercio  	  int
+	nombre, domicilio string
 	codigopostal int
-	telefono int
+	telefono string
 }
 
+//FUNCIÓN MAIN
 func main() {
 	//ABRE LA CONEXIÓN A LA BASE DE DATOS.
 	db, err := sql.Open("postgres", "user=postgres host=localhost dbname=tarjetascredito sslmode=disable")
@@ -155,16 +152,13 @@ func main() {
 	//OPCIÓN 7: GENERAR EL RESUMEN DE LAS COMPRAS.
 	if selec == 7 {
 		fmt.Printf("\nUsted ha seleccionado la opción 7: Generar el resumen de las compras.\n")
-		fmt.Printf("\nPor favor, ingrese el número de cliente:")
+		fmt.Printf("\nPor favor, ingrese el número de cliente: ")
 		var nrocli int
 		fmt.Scanf("%s", &nrocli)
 		fmt.Printf("\nIngrese el periodo del año que desea generar el resumen:")
-		//var periodo string
-		//fmt.Scanf("%s", &periodo)
-		_, err = db.Query(`select nrocliente from cliente where nrocliente == &nrocli`)
-		_, err = db.Query(`select `)
-		_, err = db.Exec(`insert into cabecera values()`)
-		_, err = db.Exec(`insert into detalle values()`)		
+		var fecha string
+		fmt.Scanf("%s", &fecha)
+		_, err = db.Query(`select t.nrocliente, t.nrotarjeta, c.fecha, sum(c.monto), c.nrotarjeta from tarjeta t, compra c where t.nrocliente == &nrocli && c.fecha == &fecha && t.nrotarjeta == c.nrotarjeta`)		
 	}
 
 	//OPCIÓN 8: GENERAR ALERTAS A LOS CLIENTES.
@@ -178,6 +172,7 @@ func main() {
 	}
 }
 
+//CONECTA CON POSTGRES
 func createDatabase() {
 	db, err := sql.Open("postgres", "user=postgres host=localhost dbname=postgres sslmode=disable")
 	if err != nil {
@@ -196,6 +191,7 @@ func createDatabase() {
 	fmt.Printf("\nNueva base de datos creada.\n")
 }
 
+//LECTURA DE ARCHIVOS
 func leerArchivo(archivo string) string {
 	datos, err := ioutil.ReadFile(archivo)
 	if err != nil {
@@ -205,6 +201,7 @@ func leerArchivo(archivo string) string {
 	return ret
 }
 
+//IMPRIME POR PANTALLA EL CONTENIDO DE UN ARCHIVO
 func mostrarDatos(archivo string) string {
 	tablas, err := ioutil.ReadFile(archivo)
 	if err != nil {
@@ -216,6 +213,7 @@ func mostrarDatos(archivo string) string {
 	return ret
 }
 
+//MENÚ VISIBLE AL USUARIO
 func menu(){
 	fmt.Printf("1. Crear una nueva base de datos.\n")
 	fmt.Printf("2. Crear las tablas.\n")
