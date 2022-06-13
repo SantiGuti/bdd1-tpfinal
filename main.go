@@ -39,6 +39,15 @@ type compra struct {
 	pagado       bool
 }
 
+type rechazo struct {
+	nrorechazo  int
+	nrotarjeta  string
+	nrocomercio int
+	fecha       string
+	monto       float64
+	motivo      string
+}
+
 //FUNCIÓN MAIN
 func main() {
 	//ABRE LA CONEXIÓN A LA BASE DE DATOS.
@@ -164,27 +173,27 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			_, err = db.Exec(`select aut_compras('4756326984155476', '6713', 015, 2000.00)`)
+			_, err = db.Exec(`select aut_compras('4532969538877007', '6640', 09, 1000.00)`)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			// rows, err := db.Query(`select * from compra`)
-			// if err != nil {
-			// 	log.Fatal(err)
-			// }
-			// defer rows.Close()
-			// //Scan de los datos contenidos en la tabla
-			// var c compra
-			// for rows.Next() {
-			// 	if err := rows.Scan(&c.nrooperacion, &c.nrotarjeta, &c.nrocomercio, &c.fecha, &c.monto, &c.pagado); err != nil {
-			// 		log.Fatal(err)
-			// 	}
-			// 	fmt.Printf("%v %v %v %v %v %v\n", c.nrooperacion, c.nrotarjeta, c.nrocomercio, c.fecha, c.monto, c.pagado)
-			// }
-			// if err = rows.Err(); err != nil {
-			// 	log.Fatal(err)
-			// }
+			rows, err := db.Query(`select * from rechazo`)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer rows.Close()
+			// Scan de los datos contenidos en la tabla
+			var r rechazo
+			for rows.Next() {
+				if err := rows.Scan(&r.nrorechazo, &r.nrotarjeta, &r.nrocomercio, &r.fecha, &r.monto, &r.motivo); err != nil {
+					log.Fatal(err)
+				}
+				fmt.Printf("%v %v %v %v %v %v\n", r.nrorechazo, r.nrotarjeta, r.nrocomercio, r.fecha, r.monto, r.motivo)
+			}
+			if err = rows.Err(); err != nil {
+				log.Fatal(err)
+			}
 		}
 
 		//OPCIÓN 7: GENERAR EL RESUMEN DE LAS COMPRAS.
