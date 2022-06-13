@@ -26,8 +26,8 @@ type comercio struct {
 	nrocomercio  int
 	nombre       string
 	domicilio    string
-	codigopostal int
-	telefono     int
+	codigopostal string
+	telefono     string
 }
 
 //FUNCIÓN MAIN
@@ -101,22 +101,22 @@ func main() {
 				log.Fatal(err)
 			}
 
-			//IMPRIME POR PANTALLA LA TABLA TARJETA
-			fmt.Printf("\nDatos de la tabla tarjeta:\n\n")
-			row, err := db.Query(`select * from tarjeta`)
+			//IMPRIME POR PANTALLA LA TABLA COMERCIO
+			fmt.Printf("\nDatos de la tabla comercio:\n\n")
+			row, err := db.Query(`select * from comercio`)
 			if err != nil {
 				log.Fatal(err)
 			}
-			defer rows.Close()
+			defer row.Close()
 			//Scan de los datos contenidos en la tabla
-			var t tarjeta
+			var co comercio
 			for row.Next() {
-				if err := rows.Scan(&t.nrotarjeta, &t.nrocliente, &t.validadesde, &t.validahasta, &t.codseguridad, &t.limitecompra, &t.estado); err != nil {
+				if err := row.Scan(&co.nrocomercio, &co.nombre, &co.domicilio, &co.codigopostal, &co.telefono); err != nil {
 					log.Fatal(err)
 				}
-				fmt.Printf("%v %v %v %v %v %v %v\n", t.nrotarjeta, t.nrocliente, t.validadesde, t.validahasta, t.codseguridad, t.limitecompra, t.estado)
+				fmt.Printf("%v %v %v %v %v\n", co.nrocomercio, co.nombre, co.domicilio, co.codigopostal, co.telefono)
 			}
-			if err = rows.Err(); err != nil {
+			if err = row.Err(); err != nil {
 				log.Fatal(err)
 			}
 		}
