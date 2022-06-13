@@ -35,7 +35,7 @@ type compra struct {
 	nrotarjeta   string
 	nrocomercio  int
 	fecha        string
-	monto        []uint8
+	monto        float64
 	pagado       bool
 }
 

@@ -24,14 +24,15 @@ begin
     end if;
 
     select sum(c.monto) into suma from compra c where c.nrotarjeta = vnrotarjeta and c.pagado = false;
+    if suma IS NULL then 
+         suma = 00.00;
+    end if;
     select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta and (suma + vmonto) < t.limitecompra;
-    raise notice 'sum %', suma;
     if not found then
-        insert into rechazo values(7, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'supera limite de compra');
+        insert into rechazo values(7, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto,'supera limite de compra');
         return false;
     end if;
-    
-    
+        
     /*select * into resultado from tarjeta t where (t.nrotarjeta = vnrotarjeta) AND CAST(t.validahasta AS DATE) < CURRENT_DATE;
     if not found then
         insert into rechazo values(4, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Plazo de vigencia expirado.');

@@ -73,6 +73,7 @@ insert into compra values(466876, 4532969538877007, 010, '2022-05-12 10:32:58', 
 insert into compra values(987896, 5203094647795928, 01, '2022-04-28 17:51:03', 12000.00, false); --Compra rechazada por tarjeta anulada
 insert into compra values(273289, 4929597785365045, 011, '2022-06-01 13:04:56', 4000.00, false); --Compra rechazada por tarjeta expirada
 insert into compra values(231827, 5588490230236186, 013, '2022-05-23 14:27:06', 76000.00, false); --Compra rechazada por límite de compra de tarjeta excedido
+insert into compra values(89034, 2720409166266195, 05, '2022-05-23 14:28:06', 500.00, false);
 
 /*Creamos 4 rechazos de compra*/
 insert into rechazo values(46878767, 4532969538877007, 010, '2022-05-12 10:32:58', 10000.00, 'La tarjeta se encuentra actualmente suspendida.');
