@@ -64,7 +64,7 @@ insert into tarjeta values(4539722778151788, 16, '202204', '202601', '9123', 150
 insert into tarjeta values(5543040397793513, 17, '202111', '202604', '4172', 300000.00, 'vigente');
 insert into tarjeta values(5331682396107249, 18, '201909', '202412', '5390', 100000.00, 'vigente');
 insert into tarjeta values(5203094647795928, 19, '202006', '202404', '4529', 150000.00, 'anulada');
-insert into tarjeta values(2720409166266195, 20, '202102', '202512', '1252', 150000.00, 'vigente');
+insert into tarjeta values(2720409166266195, 20, '202102', '202512', '1252', 1000.00, 'vigente');
 --Cliente 6 y 11 tienen dos tarjetas
 
 /*Creamos 5 compras*/

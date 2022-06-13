@@ -1,7 +1,7 @@
 create function aut_compras(vnrotarjeta char(16), vcodseguridad char(4), vnrocomercio int, vmonto decimal(7, 2)) returns boolean as $$
 declare
     resultado record;
-    suma decimal(8,2);
+    suma decimal(15,2);
 
 begin
 
@@ -23,18 +23,20 @@ begin
         return false;
     end if;
 
-    WITH suma AS (select sum(c.monto) from compra c where c.nrotarjeta = vnrotarjeta and c.pagado = false)
-    select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta and suma < t.limitecompra;
+    select sum(c.monto) into suma from compra c where c.nrotarjeta = vnrotarjeta and c.pagado = false;
+    select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta and (suma + vmonto) < t.limitecompra;
+    raise notice 'sum %', suma;
     if not found then
         insert into rechazo values(7, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'supera limite de compra');
         return false;
     end if;
     
-    select * into resultado from tarjeta t where (t.tarjeta = vnrotarjeta) AND CAST(t.validahasta AS DATE) < CURRENT_DATE;
+    
+    /*select * into resultado from tarjeta t where (t.nrotarjeta = vnrotarjeta) AND CAST(t.validahasta AS DATE) < CURRENT_DATE;
     if not found then
         insert into rechazo values(4, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Plazo de vigencia expirado.');
         return false;
-    end if;
+    end if;*/
 
     raise notice 'Compra aceptada.';
     insert into compra values (6, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, true);
@@ -42,7 +44,7 @@ begin
 end;
 $$ language plpgsql;
 
-create function generarFactura(numclient int, periodo date) returns void as $$
+/*create function generarFactura(numclient int, periodo date) returns void as $$
 declare
     nombreCliente text
     apellidoCliente text
@@ -55,4 +57,4 @@ begin
     
 
 end;
-$$ language plpgsql;
+$$ language plpgsql;*/
