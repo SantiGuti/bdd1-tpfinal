@@ -18,8 +18,8 @@ type cliente struct {
 
 type tarjeta struct {
 	nrotarjeta, nrocliente, validadesde, validahasta, codseguridad int
-	limitecompra 												   float64
-	estado 		 												   string
+	limitecompra                                                   float64
+	estado                                                         string
 }
 
 type comercio struct {
@@ -107,12 +107,12 @@ func main() {
 		//Scan de los datos contenidos en la tabla
 		var t tarjeta
 		for row.Next() {
-			if err := rows.Scan(&t.nrotarjeta, &t.nrocliente, &t.validadesde, &t.validahasta, &t.codseguridad, &t.limitecompra, &t.estado); err != nil {
+			if err := row.Scan(&t.nrotarjeta, &t.nrocliente, &t.validadesde, &t.validahasta, &t.codseguridad, &t.limitecompra, &t.estado); err != nil {
 				log.Fatal(err)
 			}
 			fmt.Printf("%v %v %v %v %v %v %v\n", t.nrotarjeta, t.nrocliente, t.validadesde, t.validahasta, t.codseguridad, t.limitecompra, t.estado)
 		}
-		if err = rows.Err(); err != nil {
+		if err = row.Err(); err != nil {
 			log.Fatal(err)
 		}
 	}
@@ -160,7 +160,7 @@ func main() {
 		fmt.Printf("\nIngrese el periodo del año que desea generar el resumen:")
 		var fecha string
 		fmt.Scanf("%s", &fecha)
-		_, err = db.Query(`select t.nrocliente, t.nrotarjeta, c.fecha, sum(c.monto), c.nrotarjeta from tarjeta t, compra c where t.nrocliente == &nrocli && c.fecha == &fecha && t.nrotarjeta == c.nrotarjeta`)		
+		_, err = db.Query(`select t.nrocliente, t.nrotarjeta, c.fecha, sum(c.monto), c.nrotarjeta from tarjeta t, compra c where t.nrocliente == &nrocli && c.fecha == &fecha && t.nrotarjeta == c.nrotarjeta`)
 		//var periodo string
 		//fmt.Scanf("%s", &periodo)
 		_, err = db.Query(`select nrocliente from cliente where nrocliente == &nrocli`)
