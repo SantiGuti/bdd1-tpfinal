@@ -30,6 +30,15 @@ type comercio struct {
 	telefono     string
 }
 
+type compra struct {
+	nrooperacion int
+	nrotarjeta   string
+	nrocomercio  int
+	fecha        string
+	monto        []uint8
+	pagado       bool
+}
+
 //FUNCIÓN MAIN
 func main() {
 	//ABRE LA CONEXIÓN A LA BASE DE DATOS.
@@ -140,9 +149,9 @@ func main() {
 			var selec1 int
 			fmt.Scanln(&selec1)
 			if selec1 == 1 {
-				_, err = db.Exec(`alter table cliente drop primary key`)
+				_, err = db.Exec(`alter table cliente drop constraint cliente_pk`)
 			}
-			_, err = db.Query(mostrarDatos("PK_FK.sql"))
+			//_, err = db.Query(mostrarDatos("PK_FK.sql"))
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -151,8 +160,31 @@ func main() {
 		//OPCIÓN 6: AUTORIZAR LAS COMPRAS.
 		if selec == 6 {
 			fmt.Printf("\nUsted ha seleccionado la opción 6: Autorizar las compras.\n")
-			//Tomo 7 casos de consumo para abarcar todas las posibilidades.
+			_, err = db.Query(leerArchivo("SP&T.sql"))
+			if err != nil {
+				log.Fatal(err)
+			}
+			_, err = db.Exec(`select aut_compras('4756326984155476', '6713', 015, 2000.00)`)
+			if err != nil {
+				log.Fatal(err)
+			}
 
+			// rows, err := db.Query(`select * from compra`)
+			// if err != nil {
+			// 	log.Fatal(err)
+			// }
+			// defer rows.Close()
+			// //Scan de los datos contenidos en la tabla
+			// var c compra
+			// for rows.Next() {
+			// 	if err := rows.Scan(&c.nrooperacion, &c.nrotarjeta, &c.nrocomercio, &c.fecha, &c.monto, &c.pagado); err != nil {
+			// 		log.Fatal(err)
+			// 	}
+			// 	fmt.Printf("%v %v %v %v %v %v\n", c.nrooperacion, c.nrotarjeta, c.nrocomercio, c.fecha, c.monto, c.pagado)
+			// }
+			// if err = rows.Err(); err != nil {
+			// 	log.Fatal(err)
+			// }
 		}
 
 		//OPCIÓN 7: GENERAR EL RESUMEN DE LAS COMPRAS.
