@@ -3,12 +3,12 @@ package main
 import(
 	"encoding/json"
 	"fmt"
-	bolt "go.etcd.io/bbolt"
+	"github.com/boltdb/bolt"
 	"log"
 	"strconv"
 )
 
-func main() {
+func datos() {
     db, err := bolt.Open("datos.db", 0600, nil)
     if err != nil {
         log.Fatal(err)
