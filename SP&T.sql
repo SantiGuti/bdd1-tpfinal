@@ -30,14 +30,29 @@ begin
         return false;
     end if;
     
-    select * into resultado from tarjeta t where (t.codseguridad != vcodseguridad) AND CAST(t.validahasta AS DATE) < CURRENT_DATE;
+    select * into resultado from tarjeta t where (t.tarjeta = vnrotarjeta) AND CAST(t.validahasta AS DATE) < CURRENT_DATE;
     if not found then
         insert into rechazo values(4, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Plazo de vigencia expirado.');
         return false;
-    end if;*/
+    end if;
 
     raise notice 'Compra aceptada.';
     insert into compra values (6, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, true);
     return true;
+end;
+$$ language plpgsql;
+
+create function generarFactura(numclient int, periodo date) returns void as $$
+declare
+    nombreCliente text
+    apellidoCliente text
+    direccionCliente text
+    nrotarjeta char(16)
+    fechaVencimiento date
+    totalAPagar decimal (8,2)
+
+begin
+    
+
 end;
 $$ language plpgsql;
