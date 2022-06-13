@@ -9,6 +9,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
+//DEFINIMOS LOS TIPOS DE DATOS
 type cliente struct {
 	nrocliente                  int
 	nombre, apellido, domicilio string
@@ -16,13 +17,9 @@ type cliente struct {
 }
 
 type tarjeta struct {
-	nrotarjeta   int
-	nrocliente   int
-	validadesde  int
-	validahasta  int
-	codseguridad int
-	limitecompra float64
-	estado       string
+	nrotarjeta, nrocliente, validadesde, validahasta, codseguridad int
+	limitecompra                                                   float64
+	estado                                                         string
 }
 
 type comercio struct {
@@ -33,6 +30,7 @@ type comercio struct {
 	telefono     int
 }
 
+//FUNCIÓN MAIN
 func main() {
 	//ABRE LA CONEXIÓN A LA BASE DE DATOS.
 	db, err := sql.Open("postgres", "user=postgres host=localhost dbname=postgres sslmode=disable")
@@ -122,13 +120,13 @@ func main() {
 	//OPCIÓN 4: ASIGNAR LAS PRIMARY KEYS Y FOREIGN KEYS.
 	if selec == 4 {
 		fmt.Printf("\nUsted ha seleccionado la opción 4: Asignar las PK y FK.\n")
-		/*_, err = db.Query(mostrarDatos("PK_FK.sql"))
+		_, err = db.Query(mostrarDatos("PK_FK.sql"))
 		if err != nil {
 			log.Fatal(err)
-		}*/
+		}
 		//Imprime los datos pero no funciona bien. Error: there ir no unique constraint matching given keys for referenced table "comercio"
 		fmt.Printf("\nSe asignará la primary key a la tabla cliente:\n")
-		_, err = db.Exec(`alter table cliente add constraint cliente_pk primary key (nrocliente)`)
+		//_, err = db.Exec(`alter table cliente add constraint cliente_pk primary key (nrocliente)`)
 	}
 
 	//OPCIÓN 5: BORRAR LAS PRIMARY KEYS Y FOREIGN KEYS.
@@ -156,10 +154,13 @@ func main() {
 	//OPCIÓN 7: GENERAR EL RESUMEN DE LAS COMPRAS.
 	if selec == 7 {
 		fmt.Printf("\nUsted ha seleccionado la opción 7: Generar el resumen de las compras.\n")
-		fmt.Printf("\nPor favor, ingrese el número de cliente:")
+		fmt.Printf("\nPor favor, ingrese el número de cliente: ")
 		var nrocli int
 		fmt.Scanf("%s", &nrocli)
 		fmt.Printf("\nIngrese el periodo del año que desea generar el resumen:")
+		var fecha string
+		fmt.Scanf("%s", &fecha)
+		_, err = db.Query(`select t.nrocliente, t.nrotarjeta, c.fecha, sum(c.monto), c.nrotarjeta from tarjeta t, compra c where t.nrocliente == &nrocli && c.fecha == &fecha && t.nrotarjeta == c.nrotarjeta`)
 		//var periodo string
 		//fmt.Scanf("%s", &periodo)
 		_, err = db.Query(`select nrocliente from cliente where nrocliente == &nrocli`)
@@ -196,6 +197,7 @@ func createDatabase(db *sql.DB, err error) {
 	fmt.Printf("\nNueva base de datos creada.\n")
 }
 
+//LECTURA DE ARCHIVOS
 func leerArchivo(archivo string) string {
 	datos, err := ioutil.ReadFile(archivo)
 	if err != nil {
@@ -205,6 +207,7 @@ func leerArchivo(archivo string) string {
 	return ret
 }
 
+//IMPRIME POR PANTALLA EL CONTENIDO DE UN ARCHIVO
 func mostrarDatos(archivo string) string {
 	tablas, err := ioutil.ReadFile(archivo)
 	if err != nil {
@@ -216,6 +219,7 @@ func mostrarDatos(archivo string) string {
 	return ret
 }
 
+//MENÚ VISIBLE AL USUARIO
 func menu() {
 	fmt.Printf("1. Crear una nueva base de datos.\n")
 	fmt.Printf("2. Crear las tablas.\n")
