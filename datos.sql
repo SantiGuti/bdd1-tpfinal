@@ -43,7 +43,7 @@ insert into comercio values(019, 'Electrodomesticos Fraverino', 'El Churrinche 3
 insert into comercio values(020, 'Casa de ropa Mimo', 'Derqui 946', 'B1804EMT', '011-74777097');
 
 /*Insertamos datos de las tarjetas de los clientes*/
-insert into tarjeta values(4756326984155476, 1, '201807', '202301', '6713', 500000.00, 'vigente');
+insert into tarjeta values(4756326984155476, 1, '201807', '202302', '6713', 500000.00, 'vigente');
 insert into tarjeta values(4532969538877007, 2, '202003', '202504', '6646', 200000.00, 'suspendida');
 insert into tarjeta values(4929941716451245, 3, '202204', '202702', '2312', 100000.00, 'vigente');
 insert into tarjeta values(4823836840552412, 4, '202105', '202612', '8748', 250000.00, 'vigente');
@@ -71,13 +71,13 @@ insert into tarjeta values(2720409166266195, 20, '202102', '202512', '1252', 150
 insert into compra values(431245, 4756326984155476, 012, '2022-05-08 12:38:05', 6000.00, true); --Compra válida
 insert into compra values(466876, 4532969538877007, 010, '2022-05-12 10:32:58', 10000.00, false); --Compra rehazada por tarjeta suspendida
 insert into compra values(987896, 5203094647795928, 01, '2022-04-28 17:51:03', 12000.00, false); --Compra rechazada por tarjeta anulada
-insert into compra values(273289, 4929597785365045,011, '2022-06-01 13:04:56', 4000.00, false); --Compra rechazada por tarjeta expirada
+insert into compra values(273289, 4929597785365045, 011, '2022-06-01 13:04:56', 4000.00, false); --Compra rechazada por tarjeta expirada
 insert into compra values(231827, 5588490230236186, 013, '2022-05-23 14:27:06', 76000.00, false); --Compra rechazada por límite de compra de tarjeta excedido
 
 /*Creamos 4 rechazos de compra*/
 insert into rechazo values(46878767, 4532969538877007, 010, '2022-05-12 10:32:58', 10000.00, 'La tarjeta se encuentra actualmente suspendida.');
-insert into rechazo values(32423423, 5203094647795928, 01, '2022-04-28 17:51:03', 12000.00, 'La tarjeta se encuentra actualmente anulada.');
-insert into rechazo values(34647372, 4929597785365045,011, '2022-06-01 13:04:56', 4000.00, 'La tarjeta se encuentra actualmente expirada.');
+insert into rechazo values(32423423, 5203094647795928, 015, '2022-04-28 17:51:03', 12000.00, 'La tarjeta se encuentra actualmente anulada.');
+insert into rechazo values(34647372, 4929597785365045, 011, '2022-06-01 13:04:56', 4000.00, 'La tarjeta se encuentra actualmente expirada.');
 insert into rechazo values(72637882, 5588490230236186, 013, '2022-05-23 14:27:06', 76000.00, 'El monto supera el límite de compra de la tarjeta.');
 
 /*Insertamos datos de los cierres de todas las tarjetas para el año 2022.*/
