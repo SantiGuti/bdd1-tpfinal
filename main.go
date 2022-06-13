@@ -122,13 +122,13 @@ func main() {
 	//OPCIÓN 4: ASIGNAR LAS PRIMARY KEYS Y FOREIGN KEYS.
 	if selec == 4 {
 		fmt.Printf("\nUsted ha seleccionado la opción 4: Asignar las PK y FK.\n")
-		/*_, err = db.Query(mostrarDatos("PK_FK.sql"))
+		_, err = db.Query(mostrarDatos("PK_FK.sql"))
 		if err != nil {
 			log.Fatal(err)
-		}*/
+		}
 		//Imprime los datos pero no funciona bien. Error: there ir no unique constraint matching given keys for referenced table "comercio"
 		fmt.Printf("\nSe asignará la primary key a la tabla cliente:\n")
-		_, err = db.Exec(`alter table cliente add constraint cliente_pk primary key (nrocliente)`)
+		//_, err = db.Exec(`alter table cliente add constraint cliente_pk primary key (nrocliente)`)
 	}
 
 	//OPCIÓN 5: BORRAR LAS PRIMARY KEYS Y FOREIGN KEYS.
