@@ -2,10 +2,7 @@ create function autorizar_compras(vnrotarjeta char(16), vcodseguridad char(4), v
 declare
     resultado record;
     suma decimal(15,2);
-    
-
 begin
-
     select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta;
     if not found then
         insert into rechazo values (9, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Tarjeta no valida');
@@ -18,9 +15,15 @@ begin
         return false;
     end if;
    
+    select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta AND estado = 'anulada';
+    if found then
+        insert into rechazo values(5, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'La tarjeta se encuentra anulada.');
+        return false;
+    end if;
+
     select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta and estado != 'vigente';
     if found then
-        insert into rechazo values(1, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Tarjeta no vigente');
+        insert into rechazo values(1, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Tarjeta no vigente.');
         return false;
     end if;
 
@@ -32,7 +35,7 @@ begin
 
     select sum(c.monto) into suma from compra c where c.nrotarjeta = vnrotarjeta and c.pagado = false;
     if suma IS NULL then 
-         suma = 00.00;
+         suma = 0.00;
     end if;
     select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta and (suma + vmonto) < t.limitecompra;
     if not found then
@@ -52,23 +55,37 @@ begin
 end;
 $$ language plpgsql;
 
-create function generarResumen(numclient int, anio int, mes int) returns void as $$
+
+
+create function generar_resumen(vnrocliente int, aniomes int) returns void as $$
 declare
-    nrotarjeta char(16);
-    result record;
-    suma decimal(8, 2);
+    vnrotarjeta char(16);
+    suma decimal(15, 2);
+    fecha date := TO_DATE(aniomes, 'YYYYMM');
+    nroresumencounter int := 0;
+    nrolineacounter int := 0;
+    datoscliente record;
+    datoscompra record;
     nombrecomercio text;
 begin
-    select c.nrotarjeta into nrotarjeta from cliente cl where cl.numclient = numclient;
-    select sum(c.monto) into suma from compra co where co.nrotarjeta = nrotarjeta and co.fecha = periodo and co.pagado = true;
-    select * into result from cliente c where c.numclient = numclient;
-    if found then
-        insert into cabecera(54, result.nombre, result.apellido, result.domicilio, nrotarjeta, date_trunc('month', periodo), date_trunc('month', periodo), date_trunc('month', periodo), suma);
-    end if;
-    for row in select * from compra com where com.nrotarjeta = nrotarjeta and com.fecha = periodo and com.pagado = true LOOP;
-        select comercio.nombrecomercio into nombrecomercio from comercio where comercio.nrocomercio = com.nrocomercio;
-        insert into detalle(54, row, c.fecha, nombrecomercio, c.monto);
-    end loop;
+    select * into datoscliente from cliente where cliente.nrocliente = vnrocliente;
+    FOR nrotarjeta IN select tarjeta.nrotarjeta into vnrotarjeta FROM tarjeta where cliente.nrocliente = vnrocliente;
+    LOOP
 
+        FOR monto IN select * into datoscompra from compra c where c.nrotarjeta = vnrotarjeta and c.periodo = fecha;
+        LOOP
+            select comercio.nombrecomercio into nombrecomercio from comercio co where datoscompra.nrocomercio = co.nrocomercio;
+            insert into detalle(nroresumencounter, nrolineacounter, nombrecomercio, datoscompra.monto);
+            UPDATE nrolineacounter SET nrolineacounter = nrolineacounter + 1;
+        END LOOP;
+
+        select sum(com.monto) into suma from compra com where com.nrotarjeta = vnrotarjeta and com.periodo = fecha;
+        -- if suma IS NULL then 
+        --     suma = 0.00;
+        -- end if;
+        insert into cabecera(nroresumencounter, datoscliente.nombre, datoscliente.apellido, datoscliente.domicilio, vnrotarjeta, fecha, fecha, fecha, suma);
+        UPDATE nroresumencounter SET nroresumencounter = nroresumencounter + 1;
+    END LOOP;
+    
 end;
 $$ language plpgsql;
