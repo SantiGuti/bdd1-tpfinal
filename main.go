@@ -154,26 +154,28 @@ func main() {
 				log.Fatal(err)
 			}
 			//Imprime los datos pero no funciona bien. Error: there ir no unique constraint matching given keys for referenced table "comercio"
-			fmt.Printf("\nSe asignará la primary key a la tabla cliente:\n")
+			//fmt.Printf("\nSe asignará la primary key a la tabla cliente:\n")
 			//_, err = db.Exec(`alter table cliente add constraint cliente_pk primary key (nrocliente)`)
 		}
 
 		//OPCIÓN 5: BORRAR LAS PRIMARY KEYS Y FOREIGN KEYS.
 		if selec == 5 {
 			fmt.Printf("\nUsted ha seleccionado la opción 5: Borrar las PK y FK.\n")
-			fmt.Printf("Si desea eliminar las PK, presione 1. Si desea eliminar las FK, presione 2.\n")
-			var selec1 int
-			fmt.Scanln(&selec1)
-			if selec1 == 1 {
-				_, err = db.Exec(`alter table cliente drop constraint cliente_pk`)
-			}
-			//_, err = db.Query(mostrarDatos("PK_FK.sql"))
+			_, err = db.Exec(leerArchivo("drop_pk_fk.sql"))
 			if err != nil {
 				log.Fatal(err)
 			}
+			fmt.Printf("\nPK Y FK eliminadas.\n")
+			//fmt.Printf("Si desea eliminar las PK, presione 1. Si desea eliminar las FK, presione 2.\n")
+			//var selec1 int
+			//fmt.Scanln(&selec1)
+			//if selec1 == 1 {
+			//	_, err = db.Exec(`alter table cliente drop constraint cliente_pk`)
+			//}
+			//_, err = db.Query(mostrarDatos("PK_FK.sql"))
 		}
 
-		//OPCIÓN 6: GENERAR ALERTAS A LOS CLIENTES.
+		//OPCIÓN 6: CARGAR FUNCIONES.
 		if selec == 6 {
 			fmt.Printf("\nUsted ha seleccionado la opción 6: Cargar funciones.\n")
 			_, err = db.Query(leerArchivo("SP&T.sql"))
