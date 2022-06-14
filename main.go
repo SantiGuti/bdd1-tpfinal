@@ -55,6 +55,17 @@ type detalle struct {
 	nombrecomercio string
 	monto          float64
 }
+type cabecera struct {
+	nroresumen int
+	nombre     string
+	apellido   string
+	domicilio  string
+	nrotarjeta string
+	desde      string
+	hasta      string
+	vence      string
+	total      float64
+}
 
 func main() {
 	//ABRE LA CONEXIÓN A LA BASE DE DATOS.
@@ -214,7 +225,7 @@ func main() {
 		//OPCIÓN 8: GENERAR EL RESUMEN DE LAS COMPRAS.
 		if selec == 8 {
 			fmt.Printf("\nUsted ha seleccionado la opción 8: Generar el resumen de las compras.\n")
-			_, err = db.Exec(`select generar_resumen(01, 202205)`)
+			_, err = db.Exec(`select generar_resumen(01, '202205')`)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -224,6 +235,7 @@ func main() {
 			// fmt.Printf("\nIngrese el periodo del año que desea generar el resumen:")
 			// var fecha string
 			// fmt.Scanf("%s", &fecha)
+			fmt.Print("TABLA DETALLE VALORES ACTUALES: ")
 			rows, err := db.Query(`select * from detalle`)
 			if err != nil {
 				log.Fatal(err)
@@ -236,6 +248,23 @@ func main() {
 					log.Fatal(err)
 				}
 				fmt.Printf("%v %v %v %v %v \n", d.nroresumen, d.nrolinea, d.fecha, d.nombrecomercio, d.monto)
+			}
+			if err = rows.Err(); err != nil {
+				log.Fatal(err)
+			}
+			fmt.Print("TABLA CABECERA VALORES ACTUALES: ")
+			rows, err = db.Query(`select * from cabecera`)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer rows.Close()
+			// Scan de los datos contenidos en la tabla
+			var c cabecera
+			for rows.Next() {
+				if err := rows.Scan(&c.nroresumen, &c.nombre, &c.apellido, &c.domicilio, &c.nrotarjeta, &c.desde, &c.hasta, &c.vence, &c.total); err != nil {
+					log.Fatal(err)
+				}
+				fmt.Printf("%v %v %v %v %v %v %v %v %v\n", c.nroresumen, c.nombre, c.apellido, c.domicilio, c.nrotarjeta, c.desde, c.hasta, c.vence, c.total)
 			}
 			if err = rows.Err(); err != nil {
 				log.Fatal(err)

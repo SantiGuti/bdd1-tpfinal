@@ -60,34 +60,34 @@ $$ language plpgsql;
 
 
 
-create function generar_resumen(vnrocliente int, aniomes int) returns void as $$
+create function generar_resumen(vnrocliente int, aniomes char(6)) returns void as $$
 declare
-    vnrotarjeta char(16);
     suma decimal(15, 2);
-    fecha date := TO_DATE(aniomes, 'YYYYMM');
-    nroresumencounter int;
-    nrolineacounter int;
+    fechares date := TO_DATE(aniomes, 'YYYYMM');
+    trecord record;
+    comprarecord record;
+    nroresumencounter int := 15;
+    nrolineacounter int := 15;
     datoscliente record;
-    datoscompra record;
     nombrecomercio text;
 begin
-    select * into datoscliente from cliente where cliente.nrocliente = vnrocliente;
-    FOR nroresumencounter IN select tarjeta.nrotarjeta into vnrotarjeta FROM tarjeta where cliente.nrocliente = vnrocliente
+    select * into datoscliente from cliente cli where cli.nrocliente = vnrocliente;
+    for trecord in select t.nrotarjeta from tarjeta t where t.nrocliente = vnrocliente
     LOOP
 
-        FOR nrolineacounter IN select * into datoscompra from compra c where c.nrotarjeta = vnrotarjeta and c.periodo = fecha
+        FOR comprarecord IN select * from compra c where c.nrotarjeta = trecord.nrotarjeta and date_trunc('month', c.fecha) = date_trunc('month', fechares) and date_trunc('year', c.fecha) = date_trunc('year', fechares)
         LOOP
-            select co.nombrecomercio into nombrecomercio from comercio co where datoscompra.nrocomercio = co.nrocomercio;
-            insert into detalle(nroresumencounter, nrolineacounter, nombrecomercio, datoscompra.monto);
-            --UPDATE nrolineacounter SET nrolineacounter = nrolineacounter + 1;
+            select nombrecomercio into nombrecomercio from comercio co where comprarecord.nrocomercio = co.nrocomercio;
+            insert into detalle values(nroresumencounter, nrolineacounter, nombrecomercio, comprarecord.monto);
+            nrolineacounter = nrolineacounter + 1;
         END LOOP;
-
-        select sum(com.monto) into suma from compra com where com.nrotarjeta = vnrotarjeta and com.periodo = fecha
-        -- if suma IS NULL then 
-        --     suma = 0.00;
-        -- end if;
-        insert into cabecera(nroresumencounter, datoscliente.nombre, datoscliente.apellido, datoscliente.domicilio, vnrotarjeta, fecha, fecha, fecha, suma);
-        --UPDATE nroresumencounter SET nroresumencounter = nroresumencounter + 1;
+        select sum(com.monto) into suma from compra com where com.nrotarjeta = trecord.nrotarjeta and date_trunc('month', com.fecha) = date_trunc('month', fechares) and date_trunc('year', com.fecha) = date_trunc('year', fechares);
+        if suma IS NULL then 
+            suma = 0.00;
+        end if;
+        
+        insert into cabecera values(nroresumencounter, datoscliente.nombre, datoscliente.apellido, datoscliente.domicilio, trecord.nrotarjeta, fechares, fechares, fechares, suma);
+        nroresumencounter = nroresumencounter + 1;
     END LOOP;
 
 end;
