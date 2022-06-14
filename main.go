@@ -48,6 +48,14 @@ type rechazo struct {
 	motivo      string
 }
 
+type detalle struct {
+	nroresumen     int
+	nrolinea       int
+	fecha          string
+	nombrecomercio string
+	monto          float64
+}
+
 func main() {
 	//ABRE LA CONEXIÓN A LA BASE DE DATOS.
 	db, err := sql.Open("postgres", "user=postgres host=localhost dbname=tarjetascredito sslmode=disable")
@@ -165,13 +173,19 @@ func main() {
 			}
 		}
 
-		//OPCIÓN 6: AUTORIZAR LAS COMPRAS.
+		//OPCIÓN 6: GENERAR ALERTAS A LOS CLIENTES.
 		if selec == 6 {
-			fmt.Printf("\nUsted ha seleccionado la opción 6: Autorizar las compras.\n")
+			fmt.Printf("\nUsted ha seleccionado la opción 6: Cargar funciones.\n")
 			_, err = db.Query(leerArchivo("SP&T.sql"))
 			if err != nil {
 				log.Fatal(err)
 			}
+			fmt.Printf("\nFunciones cargadas.\n")
+		}
+
+		//OPCIÓN 7: AUTORIZAR LAS COMPRAS.
+		if selec == 7 {
+			fmt.Printf("\nUsted ha seleccionado la opción 7: Autorizar las compras.\n")
 			_, err = db.Exec(`select autorizar_compras('4929597785365045', '6235', 011, 500.00)`)
 			if err != nil {
 				log.Fatal(err)
@@ -195,24 +209,35 @@ func main() {
 			}
 		}
 
-		//OPCIÓN 7: GENERAR EL RESUMEN DE LAS COMPRAS.
-		if selec == 7 {
-			fmt.Printf("\nUsted ha seleccionado la opción 7: Generar el resumen de las compras.\n")
-			_, err = db.Exec(`select generar_resumen(01, '2022-05')`)
+		//OPCIÓN 8: GENERAR EL RESUMEN DE LAS COMPRAS.
+		if selec == 8 {
+			fmt.Printf("\nUsted ha seleccionado la opción 8: Generar el resumen de las compras.\n")
+			_, err = db.Exec(`select generar_resumen(01, 202205)`)
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Printf("\nPor favor, ingrese el número de cliente: ")
-			var nrocli int
-			fmt.Scanf("%s", &nrocli)
-			fmt.Printf("\nIngrese el periodo del año que desea generar el resumen:")
-			var fecha string
-			fmt.Scanf("%s", &fecha)
-		}
-
-		//OPCIÓN 8: GENERAR ALERTAS A LOS CLIENTES.
-		if selec == 8 {
-			fmt.Printf("\nUsted ha seleccionado la opción 8: Generar alertas a los clientes.\n")
+			// fmt.Printf("\nPor favor, ingrese el número de cliente: ")
+			// var nrocli int
+			// fmt.Scanf("%s", &nrocli)
+			// fmt.Printf("\nIngrese el periodo del año que desea generar el resumen:")
+			// var fecha string
+			// fmt.Scanf("%s", &fecha)
+			rows, err := db.Query(`select * from detalle`)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer rows.Close()
+			// Scan de los datos contenidos en la tabla
+			var d detalle
+			for rows.Next() {
+				if err := rows.Scan(&d.nroresumen, &d.nrolinea, &d.fecha, &d.nombrecomercio, &d.monto); err != nil {
+					log.Fatal(err)
+				}
+				fmt.Printf("%v %v %v %v %v \n", d.nroresumen, d.nrolinea, d.fecha, d.nombrecomercio, d.monto)
+			}
+			if err = rows.Err(); err != nil {
+				log.Fatal(err)
+			}
 		}
 
 		//OPCIÓN 9: GENERAR DATOS EN BOLDDB.
@@ -276,9 +301,9 @@ func menu() {
 	fmt.Printf("3. Completar las tablas.\n")
 	fmt.Printf("4. Asignar las PK y FK.\n")
 	fmt.Printf("5. Borrar las PK y FK.\n")
-	fmt.Printf("6. Autorizar las compras.\n")
-	fmt.Printf("7. Generar el resumen de las compra.\n")
-	fmt.Printf("8. Generar alertas a clientes.\n")
+	fmt.Printf("6. Cargar funciones.\n")
+	fmt.Printf("7. Autorizar las compras.\n")
+	fmt.Printf("8. Generar el resumen de las compra.\n")
 	fmt.Printf("9. Generar datos en BoldDB.\n")
 	fmt.Printf("Escriba 0 para salir.\n")
 }

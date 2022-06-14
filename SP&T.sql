@@ -32,7 +32,10 @@ begin
         insert into rechazo values(2, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Código de seguridad inválido.');
         return false;
     end if;
-
+    
+    -- TESTEAR ESTE
+    -- NOT NULL VALUE A VER SI
+    -- NOS AHORRAMOS UN IF
     select sum(c.monto) into suma from compra c where c.nrotarjeta = vnrotarjeta and c.pagado = false;
     if suma IS NULL then 
          suma = 0.00;
@@ -62,30 +65,30 @@ declare
     vnrotarjeta char(16);
     suma decimal(15, 2);
     fecha date := TO_DATE(aniomes, 'YYYYMM');
-    nroresumencounter int := 0;
-    nrolineacounter int := 0;
+    nroresumencounter int;
+    nrolineacounter int;
     datoscliente record;
     datoscompra record;
     nombrecomercio text;
 begin
     select * into datoscliente from cliente where cliente.nrocliente = vnrocliente;
-    FOR nrotarjeta IN select tarjeta.nrotarjeta into vnrotarjeta FROM tarjeta where cliente.nrocliente = vnrocliente;
+    FOR nroresumencounter IN select tarjeta.nrotarjeta into vnrotarjeta FROM tarjeta where cliente.nrocliente = vnrocliente
     LOOP
 
-        FOR monto IN select * into datoscompra from compra c where c.nrotarjeta = vnrotarjeta and c.periodo = fecha;
+        FOR nrolineacounter IN select * into datoscompra from compra c where c.nrotarjeta = vnrotarjeta and c.periodo = fecha
         LOOP
-            select comercio.nombrecomercio into nombrecomercio from comercio co where datoscompra.nrocomercio = co.nrocomercio;
+            select co.nombrecomercio into nombrecomercio from comercio co where datoscompra.nrocomercio = co.nrocomercio;
             insert into detalle(nroresumencounter, nrolineacounter, nombrecomercio, datoscompra.monto);
-            UPDATE nrolineacounter SET nrolineacounter = nrolineacounter + 1;
+            --UPDATE nrolineacounter SET nrolineacounter = nrolineacounter + 1;
         END LOOP;
 
-        select sum(com.monto) into suma from compra com where com.nrotarjeta = vnrotarjeta and com.periodo = fecha;
+        select sum(com.monto) into suma from compra com where com.nrotarjeta = vnrotarjeta and com.periodo = fecha
         -- if suma IS NULL then 
         --     suma = 0.00;
         -- end if;
         insert into cabecera(nroresumencounter, datoscliente.nombre, datoscliente.apellido, datoscliente.domicilio, vnrotarjeta, fecha, fecha, fecha, suma);
-        UPDATE nroresumencounter SET nroresumencounter = nroresumencounter + 1;
+        --UPDATE nroresumencounter SET nroresumencounter = nroresumencounter + 1;
     END LOOP;
-    
+
 end;
 $$ language plpgsql;
