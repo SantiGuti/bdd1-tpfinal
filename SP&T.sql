@@ -1,10 +1,16 @@
-create function aut_compras(vnrotarjeta char(16), vcodseguridad char(4), vnrocomercio int, vmonto decimal(7, 2)) returns boolean as $$
+create function autorizar_compras(vnrotarjeta char(16), vcodseguridad char(4), vnrocomercio int, vmonto decimal(7, 2)) returns boolean as $$
 declare
     resultado record;
     suma decimal(15,2);
     
 
 begin
+
+    select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta;
+    if not found then
+        insert into rechazo values (9, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Tarjeta no valida');
+        return false;
+    end if;
 
     select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta AND estado = 'suspendida';
     if found then
@@ -14,7 +20,7 @@ begin
    
     select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta and estado != 'vigente';
     if found then
-        insert into rechazo values(1, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Tarjeta no válida o no vigente');
+        insert into rechazo values(1, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Tarjeta no vigente');
         return false;
     end if;
 
@@ -30,7 +36,7 @@ begin
     end if;
     select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta and (suma + vmonto) < t.limitecompra;
     if not found then
-        insert into rechazo values(7, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto,'supera limite de compra');
+        insert into rechazo values(7, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'La compra supera el limite de la tarjeta.');
         return false;
     end if;
         
@@ -46,14 +52,9 @@ begin
 end;
 $$ language plpgsql;
 
-create function generarResumen(numclient int, periodo date) returns void as $$
+create function generarResumen(numclient int, anio int, mes int) returns void as $$
 declare
-    -- nombreCliente text
-    -- apellidoCliente text
-    -- direccionCliente text
     nrotarjeta char(16);
-    -- fechaVencimiento date
-    -- totalAPagar decimal (8,2)
     result record;
     suma decimal(8, 2);
     nombrecomercio text;
