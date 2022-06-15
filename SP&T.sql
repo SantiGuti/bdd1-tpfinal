@@ -50,7 +50,7 @@ begin
     end if;
 
     raise notice 'Compra aceptada.';
-    insert into compra values (6, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, true);
+    insert into compra values (10, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, true);
     return true;
 end;
 $$ language plpgsql;
@@ -99,6 +99,19 @@ begin
         insert into alerta (nrotarjeta, fecha, nrorechazo, codalerta, descripcion)
         values (new.nrotarjeta, new.fecha, new.nrorechazo, 0, new.motivo);
     end if;
+
+    select * into rechazoInfo from rechazo
+    where nrotarjeta = new.nrotarjeta
+    and   motivo = new.motivo
+    and   cast(fecha as date) = cast(new.fecha as date);
+
+    if found then
+        insert into alerta(nrotarjeta, fecha, nrorechazo, codalerta, descripcion)
+        values (new.nrotarjeta, new.fecha, new.nrorechazo, 32, 'Tarjeta suspendida por exceso del límite de compra en el mismo día.');
+        
+        update tarjeta set estado = 'suspendida' where nrotarjeta = new.nrotarjeta;
+       -- TESTEAR ESTE CASO
+    end if;
     return new;
 end;
 $$ language plpgsql;
@@ -107,3 +120,44 @@ create trigger rechazo_alerta
 after insert on rechazo
 for each row
 execute procedure rechazo_alerta();
+
+create function compra_alerta() returns trigger as $$
+declare
+    compraInfo1min record;
+    compraInfo5min record;
+begin
+    select * into compraInfo1min from compra, comercio
+    where compra.nrotarjeta = new.nrotarjeta --se chequea que sea la misma tarjeta
+    and comercio.nrocomercio = compra.nrocomercio --se chequea que la compra esté asociada a ese comercio
+    and compra.nrocomercio != new.nrocomercio --se chequea que sean != comercios
+    and comercio.codigopostal = (select codigopostal from comercio where nrocomercio = new.nrocomercio)
+    --se chequea que sea el mismo cp
+    and compra.fecha > CURRENT_TIMESTAMP - interval '1 minute';
+    -- FIJARSE QUE ESTÉ BIEN LA LOGICA que sea en un lapso menor a 1 min
+
+    if found then
+    insert into alerta (nrotarjeta, fecha, codalerta, descripcion)
+    values (new.nrotarjeta, new.fecha, 1, 'Dos compras realizadas en menos de 1 min.');
+    end if;
+
+    select * into compraInfo5min from compra, comercio --asumimos que son comercios diferentes
+    where compra.nrotarjeta = new.nrotarjeta
+    and comercio.nrocomercio = compra.nrocomercio
+    and compra.nrocomercio != new.nrocomercio
+    and comercio.codigopostal != (select codigopostal from comercio where nrocomercio = new.nrocomercio)
+    -- diferente cp
+    and compra.fecha > CURRENT_TIMESTAMP - interval '5 minute';
+    -- FIJARSE QUE ESTÉ BIEN LA LOGICA que sea en un lapso menor a 5 min
+    if found then
+        insert into alerta (nrotarjeta, fecha, codalerta, descripcion)
+        values (new.nrotarjeta, new.fecha, 5, 'Dos compras realizadas en menos de 5 min.');
+    end if;
+    return new;
+end;
+$$ language plpgsql;
+
+create trigger compra_alerta
+after insert on compra
+for each row
+execute procedure compra_alerta();
+

@@ -74,6 +74,13 @@ type alerta struct {
 	codalerta   int
 	descripcion string
 }
+type alerta2 struct {
+	nroalerta   int
+	nrotarjeta  string
+	fecha       string
+	codalerta   int
+	descripcion string
+}
 
 func main() {
 	//ABRE LA CONEXIÓN A LA BASE DE DATOS.
@@ -280,6 +287,7 @@ func main() {
 			if err = rows.Err(); err != nil {
 				log.Fatal(err)
 			}
+
 			fmt.Print("\nTABLA CABECERA VALORES ACTUALES: ")
 			rows, err = db.Query(`select * from cabecera`)
 			if err != nil {
@@ -303,6 +311,71 @@ func main() {
 		if selec == 9 {
 			fmt.Printf("\nUsted ha seleccionado la opción 9: Generar datos en BoldDB.\n")
 		}
+
+		//OPCIÓN 10: TESTEO 2 COMPRAS EN MENOS DE 1 MIN.
+		if selec == 10 {
+			fmt.Printf("\nTesteo 2 compras en menos de 1 min.\n")
+			_, err = db.Query(`select autorizar_compras('5543040397793513', '4172', 017, 100.00)`)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Printf("\n1ra compra autorizada.\n")
+			_, err = db.Query(`select autorizar_compras('5543040397793513', '4172', 016, 200.00)`)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Printf("\n2da compra autorizada.\n")
+			rows, err := db.Query(`select nroalerta, nrotarjeta, fecha, codalerta, descripcion from alerta`)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer rows.Close()
+			// Scan de los datos contenidos en la tabla
+			var a2 alerta2
+			for rows.Next() {
+				if err := rows.Scan(&a2.nroalerta, &a2.nrotarjeta, &a2.fecha, &a2.codalerta, &a2.descripcion); err != nil {
+					log.Fatal(err)
+				}
+				fmt.Printf("%v %v %v %v %v \n", a2.nroalerta, a2.nrotarjeta, a2.fecha, a2.codalerta, a2.descripcion)
+			}
+			if err = rows.Err(); err != nil {
+				log.Fatal(err)
+			}
+		}
+
+		//OPCIÓN 11: TESTEO 2 COMPRAS EN MENOS DE 5 MIN.
+		if selec == 11 {
+			fmt.Printf("\nTesteo 2 compras en menos de 5 min.\n")
+			_, err = db.Query(`select autorizar_compras('4823836840552412', '8748', 03, 900.00)`)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Printf("\n1ra compra autorizada.\n")
+			_, err = db.Query(`select autorizar_compras('4823836840552412', '8748', 020, 500.00)`)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Printf("\n2da compra autorizada.\n")
+			rows, err := db.Query(`select nroalerta, nrotarjeta, fecha, codalerta, descripcion from alerta`)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer rows.Close()
+			// Scan de los datos contenidos en la tabla
+			var a2 alerta2
+			for rows.Next() {
+				if err := rows.Scan(&a2.nroalerta, &a2.nrotarjeta, &a2.fecha, &a2.codalerta, &a2.descripcion); err != nil {
+					log.Fatal(err)
+				}
+				fmt.Printf("%v %v %v %v %v \n", a2.nroalerta, a2.nrotarjeta, a2.fecha, a2.codalerta, a2.descripcion)
+			}
+			if err = rows.Err(); err != nil {
+				log.Fatal(err)
+			}
+		}
+
+		//OPCIÓN 12: TESTEO ALERTA POR 2 LIMITES DE COMPRA MISMO DIA.
+
 		if selec == 0 {
 			leave = true
 		}
@@ -364,5 +437,8 @@ func menu() {
 	fmt.Printf("7. Autorizar las compras.\n")
 	fmt.Printf("8. Generar el resumen de las compra.\n")
 	fmt.Printf("9. Generar datos en BoldDB.\n")
+	fmt.Printf("10. TESTEO 2 COMPRAS EN MENOS DE 1 MIN.\n")
+	fmt.Printf("11. TESTEO 2 COMPRAS EN MENOS DE 5 MIN.\n")
+	fmt.Printf("12. TESTEO ALERTA POR 2 LIMITES DE COMPRA.\n")
 	fmt.Printf("Escriba 0 para salir.\n")
 }
