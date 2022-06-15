@@ -89,3 +89,21 @@ begin
 
 end;
 $$ language plpgsql;
+
+create function rechazo_alerta() returns trigger as $$
+declare
+    rechazoInfo record;
+begin
+    select * into rechazoInfo from rechazo;  
+    if found then
+        insert into alerta (nrotarjeta, fecha, nrorechazo, codalerta, descripcion)
+        values (new.nrotarjeta, new.fecha, new.nrorechazo, 0, new.motivo);
+    end if;
+    return new;
+end;
+$$ language plpgsql;
+
+create trigger rechazo_alerta
+after insert on rechazo
+for each row
+execute procedure rechazo_alerta();

@@ -66,6 +66,14 @@ type cabecera struct {
 	vence      string
 	total      float64
 }
+type alerta struct {
+	nroalerta   int
+	nrotarjeta  string
+	fecha       string
+	nrorechazo  int
+	codalerta   int
+	descripcion string
+}
 
 func main() {
 	//ABRE LA CONEXIÓN A LA BASE DE DATOS.
@@ -216,6 +224,26 @@ func main() {
 					log.Fatal(err)
 				}
 				fmt.Printf("%v %v %v %v %v %v\n", r.nrorechazo, r.nrotarjeta, r.nrocomercio, r.fecha, r.monto, r.motivo)
+			}
+			if err = rows.Err(); err != nil {
+				log.Fatal(err)
+			}
+
+			fmt.Printf("\n------------------------------\n")
+			fmt.Printf("\nTodas las alertas por rechazo:\n")
+
+			rows, err = db.Query(`select * from alerta`)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer rows.Close()
+			// Scan de los datos contenidos en la tabla
+			var a alerta
+			for rows.Next() {
+				if err := rows.Scan(&a.nroalerta, &a.nrotarjeta, &a.fecha, &a.nrorechazo, &a.codalerta, &a.descripcion); err != nil {
+					log.Fatal(err)
+				}
+				fmt.Printf("%v %v %v %v %v %v\n", a.nroalerta, a.nrotarjeta, a.fecha, a.nrorechazo, a.codalerta, a.descripcion)
 			}
 			if err = rows.Err(); err != nil {
 				log.Fatal(err)
