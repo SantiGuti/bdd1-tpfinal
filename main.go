@@ -101,6 +101,7 @@ func main() {
 		if selec == 2 {
 			fmt.Printf("\nUsted ha seleccionado la opción 2: Crear las tablas.\n")
 			fmt.Printf("\nPor favor espere...\n\n")
+			fmt.Printf("\nlisto\n\n")
 			_, err = db.Query(mostrarDatos("tablas.sql"))
 			if err != nil {
 				log.Fatal(err)
@@ -114,7 +115,6 @@ func main() {
 			//LEE LOS DATOS DE LA TABLA CLIENTE
 			fmt.Printf("\nLeyendo la tabla de datos...\n")
 			_, err = db.Query(leerArchivo("datos.sql"))
-			//Presenta error a partir de este punto. Ver solución. Error: integer out of range
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -252,7 +252,7 @@ func main() {
 			if err = rows.Err(); err != nil {
 				log.Fatal(err)
 			}
-			fmt.Print("TABLA CABECERA VALORES ACTUALES: ")
+			fmt.Print("\nTABLA CABECERA VALORES ACTUALES: ")
 			rows, err = db.Query(`select * from cabecera`)
 			if err != nil {
 				log.Fatal(err)

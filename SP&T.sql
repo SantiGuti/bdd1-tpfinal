@@ -33,9 +33,6 @@ begin
         return false;
     end if;
     
-    -- TESTEAR ESTE
-    -- NOT NULL VALUE A VER SI
-    -- NOS AHORRAMOS UN IF
     select sum(c.monto) into suma from compra c where c.nrotarjeta = vnrotarjeta and c.pagado = false;
     if suma IS NULL then 
          suma = 0.00;
@@ -66,27 +63,27 @@ declare
     fechares date := TO_DATE(aniomes, 'YYYYMM');
     trecord record;
     comprarecord record;
-    nroresumencounter int := 15;
-    nrolineacounter int := 15;
+    nroresumencounter int := 0;
+    nrolineacounter int := 0;
     datoscliente record;
-    nombrecomercio text;
+    vnombrecomercio text;
 begin
     select * into datoscliente from cliente cli where cli.nrocliente = vnrocliente;
     for trecord in select t.nrotarjeta from tarjeta t where t.nrocliente = vnrocliente
     LOOP
 
-        FOR comprarecord IN select * from compra c where c.nrotarjeta = trecord.nrotarjeta and date_trunc('month', c.fecha) = date_trunc('month', fechares) and date_trunc('year', c.fecha) = date_trunc('year', fechares)
+        FOR comprarecord IN select * from compra c where c.nrotarjeta = trecord.nrotarjeta and (c.fecha - fechares) <= '1month'
         LOOP
-            select nombrecomercio into nombrecomercio from comercio co where comprarecord.nrocomercio = co.nrocomercio;
-            insert into detalle values(nroresumencounter, nrolineacounter, nombrecomercio, comprarecord.monto);
+            select nombre into vnombrecomercio from comercio co where comprarecord.nrocomercio = co.nrocomercio;
+            insert into detalle values(nroresumencounter, nrolineacounter, comprarecord.fecha, vnombrecomercio, comprarecord.monto);
             nrolineacounter = nrolineacounter + 1;
         END LOOP;
-        select sum(com.monto) into suma from compra com where com.nrotarjeta = trecord.nrotarjeta and date_trunc('month', com.fecha) = date_trunc('month', fechares) and date_trunc('year', com.fecha) = date_trunc('year', fechares);
+        select sum(com.monto) into suma from compra com where com.nrotarjeta = trecord.nrotarjeta and (com.fecha - fechares) <= '1month';
         if suma IS NULL then 
             suma = 0.00;
         end if;
         
-        insert into cabecera values(nroresumencounter, datoscliente.nombre, datoscliente.apellido, datoscliente.domicilio, trecord.nrotarjeta, fechares, fechares, fechares, suma);
+        insert into cabecera values(nroresumencounter, datoscliente.nombre, datoscliente.apellido, datoscliente.domicilio, trecord.nrotarjeta, fechares, fechares + interval '1month', fechares + interval '1month' + '1week', suma);
         nroresumencounter = nroresumencounter + 1;
     END LOOP;
 

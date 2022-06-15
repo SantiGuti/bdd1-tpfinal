@@ -89,7 +89,7 @@ insert into cierre values(2022,06,9, '2022-06-06', '2022-07-06', '2022-07-15');
 --cada terminacion va a tener para cada periodo un cierre distinto
 
 /*Insertamos los datos de cabecera del resumen*/
-insert into cabecera values(234234234, 'Juan', 'Rosas', 'Serano 701', 4756326984155476, '2022-01-09','2022-01-30','2022-02-08', 6000.00);
+--insert into cabecera values(234234234, 'Juan', 'Rosas', 'Serano 701', 4756326984155476, '2022-01-09','2022-01-30','2022-02-08', 6000.00);
 
 /*Insertamos los datos de detalle del resumen*/
 --insert into detalle values(234234234, 4757990, '2022-05-08 12:38:05', 'Farmacia San luis', 6000.00);
