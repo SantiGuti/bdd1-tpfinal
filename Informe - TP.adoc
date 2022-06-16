@@ -45,6 +45,18 @@ Para mostrar todos los consumos procesados se utilizaron Querys para llamar a ca
 
 Se cuenta además con la opción de mostrar algunos datos de clientes, tarjetas, comercios y compras generados en BoltDB, con el objetivo de comparar la carga de datos en una base relacional con una no relacional.
 
+Pasaremos a explicar un par de funciones importantes:
+
+- createDatabase(): se conecta con postgres, elimina la base de datos tarjetascredito si ya está existiendo, y la crea.
+- autorizar_compras(vnrotarjeta char(16), vcodseguridad char(4), vnrocomercio int, vmonto decimal(7, 2))    Toma una fila de la tabla tarjeta, toma sus datos y hace la correspondiente verificación con una serie de ifs si dicha tarjeta es válida, caso contrario inserta la información de la tarjeta en la tabla rechazo. Y devolverá un boolean en false.
+ es válida, sus datos se almacenarán en la tabla compra y retornará un boolean en true. 
+- generar_resumen(vnrocliente int, aniomes char(6)): se ubica en la fila cliente, por cada cliente toma su tarjeta y recorre cada una de las compras que realizó y los detalles los incerta en detalle. 
+Realiza la suma
+Luego realiza la suma de todas las compras y la inserta en la tabla cabecera.
+- function rechazo_alerta(): trigger en el cual se disparará si ingresa una nueva fila en la tabla rechazo, tomará sus valores y las incertará en alerta.
+Además, si la tarjeta fue rechazada dos veces por limite, ademas de se cambiará su estado a suspendida.
+- trigger_autorizar_compras(): trigger en el cual toma cada una de las filas de consumo y le aplica la función autorizar_compras.
+
 == Conclusiones
 
 Como conclusión a partir de lo trabajado en el trabajo práctico podemos mencionar que fue de ayuda para aprender en la práctica cómo funciona un modelo de datos, su estructura interna y conexión.
