@@ -29,12 +29,12 @@ begin
         return false;
     end if;
 
-    /*Para què me sirve este query?*/
-    /*select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta and estado != 'vigente';
+    select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta and estado != 'vigente';
     if found then
-        insert into rechazo values(1, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Tarjeta no vigente.');
+        insert into rechazo (nrotarjeta, nrocomercio, fecha, monto, motivo) 
+        values(vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Tarjeta no vigente.');
         return false;
-    end if;*/
+    end if;
 
     /*Si no coincide el còdigo de seguridad de la tarjeta, la añado a rechazos con su mensaje correspondiente y devuelvo falso.*/
     select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta and t.codseguridad != vcodseguridad;
@@ -154,7 +154,7 @@ begin
     and compra.nrocomercio != new.nrocomercio --se chequea que sean != comercios
     and comercio.codigopostal = (select codigopostal from comercio where nrocomercio = new.nrocomercio)
     --se chequea que sea el mismo cp
-    and compra.fecha > CURRENT_TIMESTAMP - interval '1 minute';
+    and (compra.fecha > CURRENT_TIMESTAMP) - '1min'; 
     -- FIJARSE QUE ESTÉ BIEN LA LOGICA que sea en un lapso menor a 1 min
 
     if found then
@@ -168,7 +168,7 @@ begin
     and compra.nrocomercio != new.nrocomercio
     and comercio.codigopostal != (select codigopostal from comercio where nrocomercio = new.nrocomercio)
     -- diferente cp
-    and compra.fecha > CURRENT_TIMESTAMP - interval '5 minute';
+    and (compra.fecha > CURRENT_TIMESTAMP) - '5min';
     -- FIJARSE QUE ESTÉ BIEN LA LOGICA que sea en un lapso menor a 5 min
     if found then
         insert into alerta (nrotarjeta, fecha, codalerta, descripcion)
