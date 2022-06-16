@@ -52,7 +52,7 @@ create table cierre(
 );
 
 create table cabecera(
-	nroresumen int,
+	nroresumen serial,
 	nombre text,
 	apellido text,
 	domicilio text,
@@ -64,7 +64,7 @@ create table cabecera(
 );
 
 create table detalle(
-	nroresumen int,
+	nroresumen serial,
 	nrolinea int,
 	fecha date,
 	nombrecomercio text,

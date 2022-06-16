@@ -81,7 +81,6 @@ declare
     fechares date := TO_DATE(aniomes, 'YYYYMM');
     trecord record;
     comprarecord record;
-    nroresumencounter int := 0;
     nrolineacounter int := 0;
     datoscliente record;
     vnombrecomercio text;
@@ -96,7 +95,8 @@ begin
         LOOP
             select nombre into vnombrecomercio from comercio co where comprarecord.nrocomercio = co.nrocomercio;
         
-            insert into detalle values(nroresumencounter, nrolineacounter, comprarecord.fecha, vnombrecomercio, comprarecord.monto);
+            insert into detalle (nrolinea, fecha, nombrecomercio, monto) 
+            values(nrolineacounter, comprarecord.fecha, vnombrecomercio, comprarecord.monto);
             nrolineacounter = nrolineacounter + 1;
         END LOOP;
         select sum(com.monto) into suma from compra com where com.nrotarjeta = trecord.nrotarjeta and (com.fecha - fechares) <= '1month';
@@ -104,8 +104,8 @@ begin
             suma = 0.00;
         end if;
         /*Guarda los valores dentro de la tabla cabecera.*/
-        insert into cabecera values(nroresumencounter, datoscliente.nombre, datoscliente.apellido, datoscliente.domicilio, trecord.nrotarjeta, fechares, fechares + interval '1month', fechares + interval '1month' + '1week', suma);
-        nroresumencounter = nroresumencounter + 1;
+        insert into cabecera (nombre, apellido, domicilio, nrotarjeta, desde, hasta, vence, total) 
+        values(datoscliente.nombre, datoscliente.apellido, datoscliente.domicilio, trecord.nrotarjeta, fechares, fechares + interval '1month', fechares + interval '1month' + '1week', suma);
     END LOOP;
 
 end;
@@ -154,7 +154,7 @@ begin
     and compra.nrocomercio != new.nrocomercio --se chequea que sean != comercios
     and comercio.codigopostal = (select codigopostal from comercio where nrocomercio = new.nrocomercio)
     --se chequea que sea el mismo cp
-    and (compra.fecha > CURRENT_TIMESTAMP) - '1min'; 
+    and (compra.fecha - CURRENT_TIMESTAMP) >= '1min'; 
     -- FIJARSE QUE ESTÉ BIEN LA LOGICA que sea en un lapso menor a 1 min
 
     if found then
@@ -168,7 +168,7 @@ begin
     and compra.nrocomercio != new.nrocomercio
     and comercio.codigopostal != (select codigopostal from comercio where nrocomercio = new.nrocomercio)
     -- diferente cp
-    and (compra.fecha > CURRENT_TIMESTAMP) - '5min';
+    and (compra.fecha - CURRENT_TIMESTAMP) >= '5min';
     -- FIJARSE QUE ESTÉ BIEN LA LOGICA que sea en un lapso menor a 5 min
     if found then
         insert into alerta (nrotarjeta, fecha, codalerta, descripcion)
