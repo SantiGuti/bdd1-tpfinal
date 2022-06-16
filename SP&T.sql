@@ -88,7 +88,9 @@ begin
         FOR comprarecord IN select * from compra c where c.nrotarjeta = trecord.nrotarjeta and (c.fecha - fechares) <= '1month'
         LOOP
             select nombre into vnombrecomercio from comercio co where comprarecord.nrocomercio = co.nrocomercio;
-        
+            /*Guarda los valores dentro de la tabla detalles.*/
+            insert into detalle values(nroresumencounter, nrolineacounter, comprarecord.fecha, vnombrecomercio, comprarecord.monto);
+            nrolineacounter = nrolineacounter + 1;
            /* insert into detalle values(nroresumencounter, nrolineacounter, comprarecord.fecha, vnombrecomercio, comprarecord.monto);
             nrolineacounter = nrolineacounter + 1;*/
         END LOOP;
@@ -96,9 +98,7 @@ begin
         if suma IS NULL then 
             suma = 0.00;
         end if;
-        /*Guarda los valores dentro de la tabla detalles.*/
-        insert into detalle values(nroresumencounter, nrolineacounter, comprarecord.fecha, vnombrecomercio, comprarecord.monto);
-        nrolineacounter = nrolineacounter + 1;
+        
         /*Guarda los valores dentro de la tabla cabecera.*/
         insert into cabecera values(nroresumencounter, datoscliente.nombre, datoscliente.apellido, datoscliente.domicilio, trecord.nrotarjeta, fechares, fechares + interval '1month', fechares + interval '1month' + '1week', suma);
         nroresumencounter = nroresumencounter + 1;

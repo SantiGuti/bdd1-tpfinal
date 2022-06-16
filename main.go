@@ -95,7 +95,7 @@ type clientes struct {
 type tarjetas struct {
 	Nrotarjeta, Nrocliente, Validadesde, Validahasta, Codseguridad int
 	Limitecompra                                                   float64
-	Estado                                                         bool
+	Estado                                                         string
 }
 
 type comercios struct {
@@ -108,7 +108,7 @@ type comercios struct {
 
 type compras struct {
 	Nrooperacion int
-	Nrotarjeta   string
+	Nrotarjeta   int
 	Nrocomercio  int
 	Fecha        string
 	Monto        float64
@@ -123,15 +123,13 @@ func main() {
 	}
 	defer db.Close()
 
-	var nombre string
-	fmt.Printf("Escriba su nombre: ")
-	fmt.Scanf("%s", &nombre)
-	fmt.Printf("Hola, %s\n", nombre)
+	fmt.Printf("¡Bienvenido!\n\n")
 
 	var leave = false
 
 	//MUESTRA UN MENÚ VISIBLE PARA EL USUARIO.
 	for !leave {
+
 		fmt.Printf("Seleccione un número del siguiente menú:\n")
 		menu()
 		var selec int
@@ -143,6 +141,16 @@ func main() {
 			fmt.Printf("Por favor espere...")
 			//Crea una nueva base de datos
 			createDatabase()
+
+			//Continuar?
+			fmt.Printf("\n¿Desea continuar operando? Presione y/n\n")
+			var consulta string
+			fmt.Scan(&consulta)
+			if consulta == "y" {
+				continue
+			}
+			break
+
 		}
 
 		//OPCIÓN 2: CREAR LAS TABLAS.
@@ -154,6 +162,15 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
+
+			//Continuar?
+			fmt.Printf("\n¿Desea continuar operando? Presione y/n\n")
+			var consulta string
+			fmt.Scan(&consulta)
+			if consulta == "y" {
+				continue
+			}
+			break
 		}
 
 		//OPCIÓN 3: CARGAR LOS DATOS.
@@ -203,6 +220,15 @@ func main() {
 			if err = row.Err(); err != nil {
 				log.Fatal(err)
 			}
+
+			//Continuar?
+			fmt.Printf("\n¿Desea continuar operando? Presione y/n\n")
+			var consulta string
+			fmt.Scan(&consulta)
+			if consulta == "y" {
+				continue
+			}
+			break
 		}
 
 		//OPCIÓN 4: ASIGNAR LAS PRIMARY KEYS Y FOREIGN KEYS.
@@ -212,6 +238,15 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
+
+			//Continuar?
+			fmt.Printf("\n¿Desea continuar operando? Presione y/n\n")
+			var consulta string
+			fmt.Scan(&consulta)
+			if consulta == "y" {
+				continue
+			}
+			break
 		}
 
 		//OPCIÓN 5: BORRAR LAS PRIMARY KEYS Y FOREIGN KEYS.
@@ -222,6 +257,15 @@ func main() {
 				log.Fatal(err)
 			}
 			fmt.Printf("\nPK Y FK eliminadas.\n")
+
+			//Continuar?
+			fmt.Printf("\n¿Desea continuar operando? Presione y/n\n")
+			var consulta string
+			fmt.Scan(&consulta)
+			if consulta == "y" {
+				continue
+			}
+			break
 		}
 
 		//OPCIÓN 6: CARGAR FUNCIONES.
@@ -232,6 +276,15 @@ func main() {
 				log.Fatal(err)
 			}
 			fmt.Printf("\nFunciones cargadas.\n")
+
+			//Continuar?
+			fmt.Printf("\n¿Desea continuar operando? Presione y/n\n")
+			var consulta string
+			fmt.Scan(&consulta)
+			if consulta == "y" {
+				continue
+			}
+			break
 		}
 
 		//OPCIÓN 7: AUTORIZAR LAS COMPRAS.
@@ -279,6 +332,15 @@ func main() {
 				log.Fatal(err)
 			}
 			fmt.Printf("\n\n")
+
+			//Continuar?
+			fmt.Printf("\n¿Desea continuar operando? Presione y/n\n")
+			var consulta string
+			fmt.Scan(&consulta)
+			if consulta == "y" {
+				continue
+			}
+			break
 		}
 
 		//OPCIÓN 8: GENERAR EL RESUMEN DE LAS COMPRAS.
@@ -323,18 +385,34 @@ func main() {
 			if err = rows.Err(); err != nil {
 				log.Fatal(err)
 			}
+			//Continuar?
+			fmt.Printf("\n¿Desea continuar operando? Presione y/n\n")
+			var consulta string
+			fmt.Scan(&consulta)
+			if consulta == "y" {
+				continue
+			}
+			break
 		}
 
 		//OPCIÓN 9: GENERAR DATOS EN BOLDDB.
 		if selec == 9 {
-			fmt.Printf("\nUsted ha seleccionado la opción 9: Generar datos en BoldDB.\n")
+			/*CONECTA CON LA BASE DE DATOS BOLT*/
+			fmt.Printf("\nUsted ha seleccionado la opción 9: Crear una base de datos Bolt.\n")
 			db, err := bolt.Open("tdbpi.boltdb", 0600, nil)
 			if err != nil {
 				log.Fatal(err)
 			}
 			defer db.Close()
+			fmt.Printf("\nCreando nueva base de datos...\n")
+			fmt.Printf("\nNueva base de datos Bolt creada.\n")
 
 			/*TRES CLIENTES*/
+			fmt.Printf("\nPresione 1 para cargar los datos de clientes.\n\n")
+			var client int
+			fmt.Scan(&client)
+			fmt.Printf("\nCargando datos de tres clientes...\n\n")
+
 			//Cliente 1
 			cliente1 := clientes{Nrocliente: 1, Nombre: "Juan", Apellido: "Rosas", Domicilio: "Serano 701", Telefono: "011-68943567"}
 			data, err := json.Marshal(cliente1)
@@ -357,35 +435,130 @@ func main() {
 
 			//Cliente 3
 			cliente3 := clientes{Nrocliente: 3, Nombre: "Roberto", Apellido: "Gonzalez", Domicilio: "Las Heras 552", Telefono: "011-23587387"}
-			data3, err := json.Marshal(cliente3)
+			cli3, err := json.Marshal(cliente3)
 			if err != nil {
 				panic(err)
 			}
-			CreateUpdate(db, "cliente", []byte(strconv.Itoa(cliente3.Nrocliente)), data3)
-			resultado3, err := ReadUnique(db, "cliente", []byte(strconv.Itoa(cliente3.Nrocliente)))
-			fmt.Printf("%s\n", resultado3)
+			CreateUpdate(db, "cliente", []byte(strconv.Itoa(cliente3.Nrocliente)), cli3)
+			resulcli3, err := ReadUnique(db, "cliente", []byte(strconv.Itoa(cliente3.Nrocliente)))
+			fmt.Printf("%s\n", resulcli3)
 
 			/*TRES TARJETAS*/
+			fmt.Printf("\nPresione 2 para cargar los datos de tarjetas.\n\n")
+			var card int
+			fmt.Scan(&card)
+			fmt.Printf("\nCargando datos de tres tarjetas...\n\n")
+
 			//Tarjeta 1
+			tarjeta1 := tarjetas{Nrotarjeta: 4756326984155476, Nrocliente: 1, Validadesde: 201807, Validahasta: 202302, Codseguridad: 6713, Limitecompra: 500000.00, Estado: "vigente"}
+			tar1, err := json.Marshal(tarjeta1)
+			if err != nil {
+				panic(err)
+			}
+			CreateUpdate(db, "tarjeta", []byte(strconv.Itoa(tarjeta1.Nrotarjeta)), tar1)
+			resultar1, err := ReadUnique(db, "tarjeta", []byte(strconv.Itoa(tarjeta1.Nrotarjeta)))
+			fmt.Printf("%s\n", resultar1)
 
 			//Tarjeta 2
+			tarjeta2 := tarjetas{Nrotarjeta: 4532969538877007, Nrocliente: 2, Validadesde: 202003, Validahasta: 202504, Codseguridad: 6646, Limitecompra: 200000.00, Estado: "vigente"}
+			tar2, err := json.Marshal(tarjeta2)
+			if err != nil {
+				panic(err)
+			}
+			CreateUpdate(db, "tarjeta", []byte(strconv.Itoa(tarjeta2.Nrotarjeta)), tar2)
+			resultar2, err := ReadUnique(db, "tarjeta", []byte(strconv.Itoa(tarjeta2.Nrotarjeta)))
+			fmt.Printf("%s\n", resultar2)
 
 			//Tarjeta 3
+			tarjeta3 := tarjetas{Nrotarjeta: 4929941716451245, Nrocliente: 3, Validadesde: 202204, Validahasta: 202702, Codseguridad: 2312, Limitecompra: 100000.00, Estado: "vigente"}
+			tar3, err := json.Marshal(tarjeta3)
+			if err != nil {
+				panic(err)
+			}
+			CreateUpdate(db, "tarjeta", []byte(strconv.Itoa(tarjeta3.Nrotarjeta)), tar3)
+			resultar3, err := ReadUnique(db, "tarjeta", []byte(strconv.Itoa(tarjeta3.Nrotarjeta)))
+			fmt.Printf("%s\n", resultar3)
 
 			/*TRES COMERCIOS*/
+			fmt.Printf("\nPresione 3 para cargar los datos de comercios.\n\n")
+			var commerce int
+			fmt.Scan(&commerce)
+			fmt.Printf("\nCargando datos de tres comercios...\n\n")
+
 			//Comercio 1
+			comercio1 := comercios{Nrocomercio: 01, Nombre: "Libreria El patito feo", Domicilio: "Av. San Luis 1687", Codigopostal: "B1663HGK", Telefono: "011-93155601"}
+			com1, err := json.Marshal(comercio1)
+			if err != nil {
+				panic(err)
+			}
+			CreateUpdate(db, "comercio", []byte(strconv.Itoa(comercio1.Nrocomercio)), com1)
+			resulcom1, err := ReadUnique(db, "comercio", []byte(strconv.Itoa(comercio1.Nrocomercio)))
+			fmt.Printf("%s\n", resulcom1)
 
 			//Comercio 2
+			comercio2 := comercios{Nrocomercio: 02, Nombre: "Heladeria Gustavo", Domicilio: "Serrano 1523", Codigopostal: "B1722NHC", Telefono: "011-97684470"}
+			com2, err := json.Marshal(comercio2)
+			if err != nil {
+				panic(err)
+			}
+			CreateUpdate(db, "comercio", []byte(strconv.Itoa(comercio2.Nrocomercio)), com2)
+			resulcom2, err := ReadUnique(db, "comercio", []byte(strconv.Itoa(comercio2.Nrocomercio)))
+			fmt.Printf("%s\n", resulcom2)
 
 			//Comercio 3
+			comercio3 := comercios{Nrocomercio: 03, Nombre: "Carniceria El cordero feliz", Domicilio: "Ituzaingo 4896", Codigopostal: "B1669FUE", Telefono: "011-40346435"}
+			com3, err := json.Marshal(comercio3)
+			if err != nil {
+				panic(err)
+			}
+			CreateUpdate(db, "comercio", []byte(strconv.Itoa(comercio3.Nrocomercio)), com3)
+			resulcom3, err := ReadUnique(db, "comercio", []byte(strconv.Itoa(comercio3.Nrocomercio)))
+			fmt.Printf("%s\n", resulcom3)
 
 			/*TRES COMPRAS*/
+			fmt.Printf("\nPresione 4 para cargar los datos de compras.\n\n")
+			var purchase int
+			fmt.Scan(&purchase)
+			fmt.Printf("\nCargando datos de tres compras...\n\n")
+
 			//Compra 1
+			compra1 := compras{Nrooperacion: 26281872, Nrotarjeta: 4756326984155476, Nrocomercio: 01, Fecha: "05/06/2022", Monto: 5000.00, Pagado: false}
+			comp1, err := json.Marshal(compra1)
+			if err != nil {
+				panic(err)
+			}
+			CreateUpdate(db, "compra", []byte(strconv.Itoa(compra1.Nrooperacion)), comp1)
+			resulcomp1, err := ReadUnique(db, "compra", []byte(strconv.Itoa(compra1.Nrooperacion)))
+			fmt.Printf("%s\n", resulcomp1)
 
 			//Compra 2
+			compra2 := compras{Nrooperacion: 26281872, Nrotarjeta: 4532969538877007, Nrocomercio: 02, Fecha: "06/06/2022", Monto: 7000.00, Pagado: false}
+			comp2, err := json.Marshal(compra2)
+			if err != nil {
+				panic(err)
+			}
+			CreateUpdate(db, "compra", []byte(strconv.Itoa(compra2.Nrooperacion)), comp2)
+			resulcomp2, err := ReadUnique(db, "compra", []byte(strconv.Itoa(compra2.Nrooperacion)))
+			fmt.Printf("%s\n", resulcomp2)
 
 			//Compra 3
+			compra3 := compras{Nrooperacion: 26283535, Nrotarjeta: 4929941716451245, Nrocomercio: 03, Fecha: "07/06/2022", Monto: 4000.00, Pagado: false}
+			comp3, err := json.Marshal(compra3)
+			if err != nil {
+				panic(err)
+			}
+			CreateUpdate(db, "compra", []byte(strconv.Itoa(compra3.Nrooperacion)), comp3)
+			resulcomp3, err := ReadUnique(db, "compra", []byte(strconv.Itoa(compra3.Nrooperacion)))
+			fmt.Printf("%s\n", resulcomp3)
 
+			//Continuar?
+			fmt.Printf("\n¿Desea continuar operando? Presione y/n\n")
+			var consulta string
+			fmt.Scan(&consulta)
+			if consulta == "y" {
+				continue
+			}
+			break
 		}
 
 		//OPCIÓN 10: TESTEO 2 COMPRAS EN MENOS DE 1 MIN.
@@ -516,7 +689,7 @@ func menu() {
 	fmt.Printf("10. TESTEO 2 COMPRAS EN MENOS DE 1 MIN.\n")
 	fmt.Printf("11. TESTEO 2 COMPRAS EN MENOS DE 5 MIN.\n")
 	fmt.Printf("12. TESTEO ALERTA POR 2 LIMITES DE COMPRA.\n")
-	fmt.Printf("Escriba 0 para salir.\n")
+	fmt.Printf("Escriba 0 para salir.\n\n")
 }
 
 /*TRANSACCIÓN DE ESCRITURA*/
