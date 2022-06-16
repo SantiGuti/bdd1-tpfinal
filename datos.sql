@@ -73,7 +73,8 @@ insert into compra values(466876, 4532969538877007, 010, '2022-05-12 10:32:58', 
 insert into compra values(987896, 5203094647795928, 01, '2022-04-28 17:51:03', 12000.00, false); --Compra rechazada por tarjeta anulada
 insert into compra values(273289, 4929597785365045, 011, '2022-06-01 13:04:56', 4000.00, false); --Compra rechazada por tarjeta expirada
 insert into compra values(231827, 5588490230236186, 013, '2022-05-23 14:27:06', 76000.00, false); --Compra rechazada por límite de compra de tarjeta excedido
-insert into compra values(89034, 2720409166266195, 05, '2022-05-23 14:28:06', 500.00, false);*/
+insert into compra values(89034, 2720409166266195, 05, '2022-05-23 14:28:06', 500.00, false);
+insert into compra values(43125, 4756326984155476, 015, '2022-05-18 12:38:05', 4000.00, true);*/
 
 /*Creamos 4 rechazos de compra*/
 /*insert into rechazo values(46878767, 4532969538877007, 010, '2022-05-12 10:32:58', 10000.00, 'La tarjeta se encuentra actualmente suspendida.');
@@ -101,7 +102,8 @@ insert into alerta values(432543, 4929597785365045, '2022-06-01 13:04:56', 34647
 insert into alerta values(565768, 5588490230236186, '2022-05-23 14:27:06', 72637882, 9866, 'Estimado cliente, le informamos que su compra ha sido rechazada ya que su tarjeta ha superado el límite de compra.');*/
 
 /*Insertamos datos de consumo para realizar pruebas*/
-insert into consumo values(4756326984155476, '6713', 015, 2000.00); --Consumo válido
+insert into consumo values(4756326984155476, '6713', 015, 2000.00);
+insert into consumo values(4756326984155476, '6713', 05, 6000.00); --Consumo válido
 
 insert into consumo values(5543040397793513, '4172', 017, 100.00); 
 insert into consumo values(5543040397793513, '4172', 016, 200.00); 

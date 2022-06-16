@@ -89,16 +89,13 @@ begin
         LOOP
             select nombre into vnombrecomercio from comercio co where comprarecord.nrocomercio = co.nrocomercio;
         
-           /* insert into detalle values(nroresumencounter, nrolineacounter, comprarecord.fecha, vnombrecomercio, comprarecord.monto);
-            nrolineacounter = nrolineacounter + 1;*/
+            insert into detalle values(nroresumencounter, nrolineacounter, comprarecord.fecha, vnombrecomercio, comprarecord.monto);
+            nrolineacounter = nrolineacounter + 1;
         END LOOP;
         select sum(com.monto) into suma from compra com where com.nrotarjeta = trecord.nrotarjeta and (com.fecha - fechares) <= '1month';
         if suma IS NULL then 
             suma = 0.00;
         end if;
-        /*Guarda los valores dentro de la tabla detalles.*/
-        insert into detalle values(nroresumencounter, nrolineacounter, comprarecord.fecha, vnombrecomercio, comprarecord.monto);
-        nrolineacounter = nrolineacounter + 1;
         /*Guarda los valores dentro de la tabla cabecera.*/
         insert into cabecera values(nroresumencounter, datoscliente.nombre, datoscliente.apellido, datoscliente.domicilio, trecord.nrotarjeta, fechares, fechares + interval '1month', fechares + interval '1month' + '1week', suma);
         nroresumencounter = nroresumencounter + 1;
