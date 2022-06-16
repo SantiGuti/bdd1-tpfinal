@@ -141,36 +141,19 @@ func main() {
 			fmt.Printf("Por favor espere...")
 			//Crea una nueva base de datos
 			createDatabase()
-
-			//Continuar?
-			fmt.Printf("\n¿Desea continuar operando? Presione y/n\n")
-			var consulta string
-			fmt.Scan(&consulta)
-			if consulta == "y" {
-				continue
-			}
-			break
-
+			fmt.Printf("\nBase de datos creada.\n")
 		}
 
 		//OPCIÓN 2: CREAR LAS TABLAS.
 		if selec == 2 {
 			fmt.Printf("\nUsted ha seleccionado la opción 2: Crear las tablas.\n")
 			fmt.Printf("\nPor favor espere...\n\n")
-			fmt.Printf("\nlisto\n\n")
+
 			_, err = db.Query(mostrarDatos("tablas.sql"))
 			if err != nil {
 				log.Fatal(err)
 			}
-
-			//Continuar?
-			fmt.Printf("\n¿Desea continuar operando? Presione y/n\n")
-			var consulta string
-			fmt.Scan(&consulta)
-			if consulta == "y" {
-				continue
-			}
-			break
+			fmt.Printf("\nTablas creadas.\n")
 		}
 
 		//OPCIÓN 3: CARGAR LOS DATOS.
@@ -221,14 +204,7 @@ func main() {
 				log.Fatal(err)
 			}
 
-			//Continuar?
-			fmt.Printf("\n¿Desea continuar operando? Presione y/n\n")
-			var consulta string
-			fmt.Scan(&consulta)
-			if consulta == "y" {
-				continue
-			}
-			break
+			fmt.Printf("\nTablas completadas.\n")
 		}
 
 		//OPCIÓN 4: ASIGNAR LAS PRIMARY KEYS Y FOREIGN KEYS.
@@ -238,15 +214,7 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-
-			//Continuar?
-			fmt.Printf("\n¿Desea continuar operando? Presione y/n\n")
-			var consulta string
-			fmt.Scan(&consulta)
-			if consulta == "y" {
-				continue
-			}
-			break
+			fmt.Printf("\nPKs y FKs asignadas.\n")
 		}
 
 		//OPCIÓN 5: BORRAR LAS PRIMARY KEYS Y FOREIGN KEYS.
@@ -256,16 +224,7 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Printf("\nPK Y FK eliminadas.\n")
-
-			//Continuar?
-			fmt.Printf("\n¿Desea continuar operando? Presione y/n\n")
-			var consulta string
-			fmt.Scan(&consulta)
-			if consulta == "y" {
-				continue
-			}
-			break
+			fmt.Printf("\nPKs Y FKs eliminadas.\n")
 		}
 
 		//OPCIÓN 6: CARGAR FUNCIONES.
@@ -276,15 +235,6 @@ func main() {
 				log.Fatal(err)
 			}
 			fmt.Printf("\nFunciones cargadas.\n")
-
-			//Continuar?
-			fmt.Printf("\n¿Desea continuar operando? Presione y/n\n")
-			var consulta string
-			fmt.Scan(&consulta)
-			if consulta == "y" {
-				continue
-			}
-			break
 		}
 
 		//OPCIÓN 7: AUTORIZAR LAS COMPRAS.
@@ -331,16 +281,7 @@ func main() {
 			if err = rows.Err(); err != nil {
 				log.Fatal(err)
 			}
-			fmt.Printf("\n\n")
-
-			//Continuar?
-			fmt.Printf("\n¿Desea continuar operando? Presione y/n\n")
-			var consulta string
-			fmt.Scan(&consulta)
-			if consulta == "y" {
-				continue
-			}
-			break
+			fmt.Printf("\nCompras autorizadas.\n")
 		}
 
 		//OPCIÓN 8: GENERAR EL RESUMEN DE LAS COMPRAS.
@@ -385,14 +326,7 @@ func main() {
 			if err = rows.Err(); err != nil {
 				log.Fatal(err)
 			}
-			//Continuar?
-			fmt.Printf("\n¿Desea continuar operando? Presione y/n\n")
-			var consulta string
-			fmt.Scan(&consulta)
-			if consulta == "y" {
-				continue
-			}
-			break
+			fmt.Printf("\nResumenes generados.\n")
 		}
 
 		//OPCIÓN 9: GENERAR DATOS EN BOLDDB.
@@ -551,114 +485,7 @@ func main() {
 			resulcomp3, err := ReadUnique(db, "compra", []byte(strconv.Itoa(compra3.Nrooperacion)))
 			fmt.Printf("%s\n", resulcomp3)
 
-			//Continuar?
-			fmt.Printf("\n¿Desea continuar operando? Presione y/n\n")
-			var consulta string
-			fmt.Scan(&consulta)
-			if consulta == "y" {
-				continue
-			}
-			break
-		}
-
-		//OPCIÓN 10: TESTEO 2 COMPRAS EN MENOS DE 1 MIN.
-		if selec == 10 {
-			fmt.Printf("\nTesteo 2 compras en menos de 1 min.\n")
-			_, err = db.Query(`select autorizar_compras('5543040397793513', '4172', 017, 100.00)`)
-			if err != nil {
-				log.Fatal(err)
-			}
-			fmt.Printf("\n1ra compra autorizada.\n")
-			_, err = db.Query(`select autorizar_compras('5543040397793513', '4172', 016, 200.00)`)
-			if err != nil {
-				log.Fatal(err)
-			}
-			fmt.Printf("\n2da compra autorizada.\n")
-			rows, err := db.Query(`select nroalerta, nrotarjeta, fecha, codalerta, descripcion from alerta`)
-			if err != nil {
-				log.Fatal(err)
-			}
-			defer rows.Close()
-			// Scan de los datos contenidos en la tabla
-			var a2 alerta2
-			for rows.Next() {
-				if err := rows.Scan(&a2.nroalerta, &a2.nrotarjeta, &a2.fecha, &a2.codalerta, &a2.descripcion); err != nil {
-					log.Fatal(err)
-				}
-				fmt.Printf("%v %v %v %v %v \n", a2.nroalerta, a2.nrotarjeta, a2.fecha, a2.codalerta, a2.descripcion)
-			}
-			if err = rows.Err(); err != nil {
-				log.Fatal(err)
-			}
-		}
-
-		//OPCIÓN 11: TESTEO 2 COMPRAS EN MENOS DE 5 MIN.
-		if selec == 11 {
-			fmt.Printf("\nTesteo 2 compras en menos de 5 min.\n")
-			_, err = db.Query(`select autorizar_compras('4823836840552412', '8748', 03, 900.00)`)
-			if err != nil {
-				log.Fatal(err)
-			}
-			fmt.Printf("\n1ra compra autorizada.\n")
-			_, err = db.Query(`select autorizar_compras('4823836840552412', '8748', 020, 500.00)`)
-			if err != nil {
-				log.Fatal(err)
-			}
-			fmt.Printf("\n2da compra autorizada.\n")
-			rows, err := db.Query(`select nroalerta, nrotarjeta, fecha, codalerta, descripcion from alerta`)
-			if err != nil {
-				log.Fatal(err)
-			}
-			defer rows.Close()
-			// Scan de los datos contenidos en la tabla
-			var a2 alerta2
-			for rows.Next() {
-				if err := rows.Scan(&a2.nroalerta, &a2.nrotarjeta, &a2.fecha, &a2.codalerta, &a2.descripcion); err != nil {
-					log.Fatal(err)
-				}
-				fmt.Printf("%v %v %v %v %v \n", a2.nroalerta, a2.nrotarjeta, a2.fecha, a2.codalerta, a2.descripcion)
-			}
-			if err = rows.Err(); err != nil {
-				log.Fatal(err)
-			}
-		}
-
-		//OPCIÓN 12: TESTEO ALERTA POR 2 LIMITES DE COMPRA MISMO DIA.
-
-		//OPCIÓN 13: LISTA DE RECHAZOS
-		if selec == 13 {
-			fmt.Printf("\nRECHAZOS.\n")
-			rows, err := db.Query(`select * from rechazo`)
-			if err != nil {
-				log.Fatal(err)
-			}
-			defer rows.Close()
-			for rows.Next() {
-				var nrorechazo string
-				var nrotarjeta string
-				var nrocomercio string
-				var fecha string
-				var monto string
-				var motivo string
-				err := rows.Scan(&nrorechazo, &nrotarjeta, &nrocomercio, &fecha, &monto, &motivo)
-				if err != nil {
-					log.Fatal(err)
-				}
-				fmt.Println(nrorechazo + "-" + nrotarjeta + "-" + nrocomercio + "-" + fecha + "-" + monto + "-" + motivo)
-			}
-			if err != nil {
-				log.Fatal(err)
-			}
-
-		}
-
-		/*14: TESTEO AUT COMPRA*/
-		if selec == 14 {
-			fmt.Printf("\nTESTEO AUT COMPRA.\n")
-			_, err := db.Query(`select testeo_autorizar_compras()`)
-			if err != nil {
-				log.Fatal(err)
-			}
+			fmt.Printf("\nBase de datos en BoltDB generada.\n")
 		}
 
 		if selec == 0 {
@@ -686,7 +513,6 @@ func createDatabase() {
 		log.Fatal(err)
 	}
 	defer db.Close()
-	fmt.Printf("\nNueva base de datos creada.\n")
 }
 
 //LECTURA DE ARCHIVOS
@@ -722,11 +548,6 @@ func menu() {
 	fmt.Printf("7. Autorizar las compras.\n")
 	fmt.Printf("8. Generar el resumen de las compra.\n")
 	fmt.Printf("9. Generar datos en BoldDB.\n")
-	fmt.Printf("10. TESTEO 2 COMPRAS EN MENOS DE 1 MIN.\n")
-	fmt.Printf("11. TESTEO 2 COMPRAS EN MENOS DE 5 MIN.\n")
-	fmt.Printf("12. TESTEO ALERTA POR 2 LIMITES DE COMPRA.\n")
-	fmt.Printf("13. LISTA DE RECHAZOS.\n")
-	fmt.Print("14. TESTEO testeo_autorizar_compras\n")
 	fmt.Printf("Escriba 0 para salir.\n")
 }
 
