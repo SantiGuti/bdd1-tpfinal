@@ -106,6 +106,7 @@ begin
         /*Guarda los valores dentro de la tabla cabecera.*/
         insert into cabecera (nombre, apellido, domicilio, nrotarjeta, desde, hasta, vence, total) 
         values(datoscliente.nombre, datoscliente.apellido, datoscliente.domicilio, trecord.nrotarjeta, fechares, fechares + interval '1month', fechares + interval '1month' + '1week', suma);
+        insert into cierre values (extract('year' from fechares), extract('month' from fechares), right(trecord.nrotarjeta, 4)::int, fechares, fechares + interval '1month', fechares + interval '1month' + '1week');
     END LOOP;
 
 end;

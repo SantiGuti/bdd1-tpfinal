@@ -43,7 +43,7 @@ create table rechazo(
 );
 
 create table cierre(
-	año int,
+	anio int,
 	mes int,
 	terminacion int,
 	fechainicio date,
