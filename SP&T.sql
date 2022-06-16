@@ -155,12 +155,11 @@ begin
     and compra.nrocomercio != new.nrocomercio --se chequea que sean != comercios
     and comercio.codigopostal = (select codigopostal from comercio where nrocomercio = new.nrocomercio)
     --se chequea que sea el mismo cp
-    and (compra.fecha - CURRENT_TIMESTAMP) >= '1min'; 
-    -- FIJARSE QUE ESTÉ BIEN LA LOGICA que sea en un lapso menor a 1 min
+    and (compra.fecha - CURRENT_TIMESTAMP) <= '1min'; 
 
     if found then
-    insert into alerta (nrotarjeta, fecha, codalerta, descripcion)
-    values (new.nrotarjeta, new.fecha, 1, 'Dos compras realizadas en menos de 1 min.');
+    insert into alerta (nrotarjeta, fecha, nrorechazo, codalerta, descripcion)
+    values (new.nrotarjeta, new.fecha, 0, 1, 'Dos compras realizadas en menos de 1 min.');
     end if;
 
     select * into compraInfo5min from compra, comercio --asumimos que son comercios diferentes
@@ -169,11 +168,10 @@ begin
     and compra.nrocomercio != new.nrocomercio
     and comercio.codigopostal != (select codigopostal from comercio where nrocomercio = new.nrocomercio)
     -- diferente cp
-    and (compra.fecha - CURRENT_TIMESTAMP) >= '5min';
-    -- FIJARSE QUE ESTÉ BIEN LA LOGICA que sea en un lapso menor a 5 min
+    and (compra.fecha - CURRENT_TIMESTAMP) <= '5min';
     if found then
-        insert into alerta (nrotarjeta, fecha, codalerta, descripcion)
-        values (new.nrotarjeta, new.fecha, 5, 'Dos compras realizadas en menos de 5 min.');
+        insert into alerta (nrotarjeta, fecha, nrorechazo, codalerta, descripcion)
+        values (new.nrotarjeta, new.fecha, 0, 5, 'Dos compras realizadas en menos de 5 min.');
     end if;
     return new;
 end;
@@ -184,7 +182,7 @@ after insert on compra
 for each row
 execute procedure compra_alerta();
 
-create function testeo_autorizar_compras() returns void as $$
+create function trigger_autorizar_compras() returns void as $$
 declare
     infoChequeo record;
 begin
@@ -194,4 +192,3 @@ begin
     END LOOP;
 end;
 $$ language plpgsql;
---TESTEAR

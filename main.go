@@ -217,19 +217,9 @@ func main() {
 			fmt.Printf("\nPKs y FKs asignadas.\n")
 		}
 
-		//OPCIÓN 5: BORRAR LAS PRIMARY KEYS Y FOREIGN KEYS.
+		//OPCIÓN 5: CARGAR FUNCIONES.
 		if selec == 5 {
-			fmt.Printf("\nUsted ha seleccionado la opción 5: Borrar las PK y FK.\n")
-			_, err = db.Exec(leerArchivo("drop_pk_fk.sql"))
-			if err != nil {
-				log.Fatal(err)
-			}
-			fmt.Printf("\nPKs Y FKs eliminadas.\n")
-		}
-
-		//OPCIÓN 6: CARGAR FUNCIONES.
-		if selec == 6 {
-			fmt.Printf("\nUsted ha seleccionado la opción 6: Cargar funciones.\n")
+			fmt.Printf("\nUsted ha seleccionado la opción 5: Cargar funciones.\n")
 			_, err = db.Query(leerArchivo("SP&T.sql"))
 			if err != nil {
 				log.Fatal(err)
@@ -237,10 +227,10 @@ func main() {
 			fmt.Printf("\nFunciones cargadas.\n")
 		}
 
-		//OPCIÓN 7: AUTORIZAR LAS COMPRAS.
-		if selec == 7 {
-			fmt.Printf("\nUsted ha seleccionado la opción 7: Autorizar las compras.\n")
-			_, err = db.Exec(`select autorizar_compras('4929597785365045', '6235', 011, 500.00)`)
+		//OPCIÓN 6: AUTORIZAR LAS COMPRAS.
+		if selec == 6 {
+			fmt.Printf("\nUsted ha seleccionado la opción 6: Autorizar las compras.\n")
+			_, err = db.Exec(`select trigger_autorizar_compras()`)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -284,9 +274,9 @@ func main() {
 			fmt.Printf("\nCompras autorizadas.\n")
 		}
 
-		//OPCIÓN 8: GENERAR EL RESUMEN DE LAS COMPRAS.
-		if selec == 8 {
-			fmt.Printf("\nUsted ha seleccionado la opción 8: Generar el resumen de las compras.\n")
+		//OPCIÓN 7: GENERAR EL RESUMEN DE LAS COMPRAS.
+		if selec == 7 {
+			fmt.Printf("\nUsted ha seleccionado la opción 7: Generar el resumen de las compras.\n")
 			_, err = db.Exec(`select generar_resumen(01, '202206')`)
 			if err != nil {
 				log.Fatal(err)
@@ -329,10 +319,10 @@ func main() {
 			fmt.Printf("\nResumenes generados.\n")
 		}
 
-		//OPCIÓN 9: GENERAR DATOS EN BOLDDB.
-		if selec == 9 {
+		//OPCIÓN 8: GENERAR DATOS EN BOLDDB.
+		if selec == 8 {
 			/*CONECTA CON LA BASE DE DATOS BOLT*/
-			fmt.Printf("\nUsted ha seleccionado la opción 9: Crear una base de datos Bolt.\n")
+			fmt.Printf("\nUsted ha seleccionado la opción 8: Crear una base de datos Bolt.\n")
 			db, err := bolt.Open("tdbpi.boltdb", 0600, nil)
 			if err != nil {
 				log.Fatal(err)
@@ -488,6 +478,16 @@ func main() {
 			fmt.Printf("\nBase de datos en BoltDB generada.\n")
 		}
 
+		//OPCIÓN 9: BORRAR LAS PRIMARY KEYS Y FOREIGN KEYS.
+		if selec == 9 {
+			fmt.Printf("\nUsted ha seleccionado la opción 9: Borrar las PK y FK.\n")
+			_, err = db.Exec(leerArchivo("drop_pk_fk.sql"))
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Printf("\nPKs Y FKs eliminadas.\n")
+		}
+
 		if selec == 0 {
 			leave = true
 		}
@@ -543,11 +543,11 @@ func menu() {
 	fmt.Printf("2. Crear las tablas.\n")
 	fmt.Printf("3. Completar las tablas.\n")
 	fmt.Printf("4. Asignar las PK y FK.\n")
-	fmt.Printf("5. Borrar las PK y FK.\n")
-	fmt.Printf("6. Cargar funciones.\n")
-	fmt.Printf("7. Autorizar las compras.\n")
-	fmt.Printf("8. Generar el resumen de las compra.\n")
-	fmt.Printf("9. Generar datos en BoldDB.\n")
+	fmt.Printf("5. Cargar funciones.\n")
+	fmt.Printf("6. Autorizar las compras.\n")
+	fmt.Printf("7. Generar el resumen de las compra.\n")
+	fmt.Printf("8. Generar datos en BoldDB.\n")
+	fmt.Printf("9. Borrar las PK y FK.\n")
 	fmt.Printf("Escriba 0 para salir.\n")
 }
 
