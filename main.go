@@ -284,7 +284,7 @@ func main() {
 		//OPCIÓN 8: GENERAR EL RESUMEN DE LAS COMPRAS.
 		if selec == 8 {
 			fmt.Printf("\nUsted ha seleccionado la opción 8: Generar el resumen de las compras.\n")
-			_, err = db.Exec(`select generar_resumen(01, '202205')`)
+			_, err = db.Exec(`select generar_resumen(01, '202206')`)
 			if err != nil {
 				log.Fatal(err)
 			}
