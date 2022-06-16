@@ -192,13 +192,6 @@ func main() {
 				log.Fatal(err)
 			}
 			fmt.Printf("\nPK Y FK eliminadas.\n")
-			//fmt.Printf("Si desea eliminar las PK, presione 1. Si desea eliminar las FK, presione 2.\n")
-			//var selec1 int
-			//fmt.Scanln(&selec1)
-			//if selec1 == 1 {
-			//	_, err = db.Exec(`alter table cliente drop constraint cliente_pk`)
-			//}
-			//_, err = db.Query(mostrarDatos("PK_FK.sql"))
 		}
 
 		//OPCIÓN 6: CARGAR FUNCIONES.

@@ -102,7 +102,7 @@ begin
 
     select * into rechazoInfo from rechazo
     where nrotarjeta = new.nrotarjeta
-    and   motivo = new.motivo
+    and   motivo = 'La compra supera el limite de la tarjeta.'
     and   cast(fecha as date) = cast(new.fecha as date);
 
     if found then
@@ -110,7 +110,7 @@ begin
         values (new.nrotarjeta, new.fecha, new.nrorechazo, 32, 'Tarjeta suspendida por exceso del límite de compra en el mismo día.');
         
         update tarjeta set estado = 'suspendida' where nrotarjeta = new.nrotarjeta;
-       -- TESTEAR ESTE CASO
+       
     end if;
     return new;
 end;
@@ -161,3 +161,14 @@ after insert on compra
 for each row
 execute procedure compra_alerta();
 
+create function testeo_autorizar_compras() returns void as $$
+declare
+    infoChequeo record;
+begin
+    for infoChequeo in select * from consumo
+    LOOP
+    select autorizar_compras(infoChequeo.nrotarjeta, infoChequeo.codseguridad, infoChequeo.nrocomercio, infoChequeo.monto);
+    END LOOP;
+end;
+$$ language plpgsql;
+--TESTEAR
