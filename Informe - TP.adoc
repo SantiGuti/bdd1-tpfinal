@@ -36,7 +36,7 @@ Se encuentran los siguientes archivos .SQL:
 - datos = ejecuta los INSERT INTO TABLE, asigna a cada tabla los datos necesarios y correspondientes.
 - PK_FK = ejecuta los ALTER TABLE ADD CONSTRAINT para asignarle a cada tabla su PK Y FK correspondiente.
 - drop_pk_fk = ejecuta los ALTER TABLE DROP CONSTRAINT los cuales elimina la asignación de su PK y FK a cada tabla.
-- SP&T = contiene los stored procedures y triggers para autorizar los consumos, generar las alertas y generar los resúmenes de las tarjetas.
+- SP&T = ejecuta los stored procedures y triggers para autorizar los consumos, generar las alertas y generar los resúmenes de las tarjetas.
 
 Para mostrar lo señalado anteriormente se creó una aplicación CLI escrita en GO, contiene un menú en el cual según la opción que el usuario seleccione, la realiza.
 Se crea la base de datos y se conecta con postgres.
