@@ -2,10 +2,13 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"strconv"
 
+	"github.com/boltdb/bolt"
 	_ "github.com/lib/pq"
 )
 
@@ -80,6 +83,36 @@ type alerta2 struct {
 	fecha       string
 	codalerta   int
 	descripcion string
+}
+
+//ESTRUCTURAS DE DATOS PARA JSON (DATOS PÚBLICOS)
+type clientes struct {
+	Nrocliente                  int
+	Nombre, Apellido, Domicilio string
+	Telefono                    string
+}
+
+type tarjetas struct {
+	Nrotarjeta, Nrocliente, Validadesde, Validahasta, Codseguridad int
+	Limitecompra                                                   float64
+	Estado                                                         bool
+}
+
+type comercios struct {
+	Nrocomercio  int
+	Nombre       string
+	Domicilio    string
+	Codigopostal string
+	Telefono     string
+}
+
+type compras struct {
+	Nrooperacion int
+	Nrotarjeta   string
+	Nrocomercio  int
+	Fecha        string
+	Monto        float64
+	Pagado       bool
 }
 
 func main() {
@@ -179,9 +212,6 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			//Imprime los datos pero no funciona bien. Error: there ir no unique constraint matching given keys for referenced table "comercio"
-			//fmt.Printf("\nSe asignará la primary key a la tabla cliente:\n")
-			//_, err = db.Exec(`alter table cliente add constraint cliente_pk primary key (nrocliente)`)
 		}
 
 		//OPCIÓN 5: BORRAR LAS PRIMARY KEYS Y FOREIGN KEYS.
@@ -192,13 +222,6 @@ func main() {
 				log.Fatal(err)
 			}
 			fmt.Printf("\nPK Y FK eliminadas.\n")
-			//fmt.Printf("Si desea eliminar las PK, presione 1. Si desea eliminar las FK, presione 2.\n")
-			//var selec1 int
-			//fmt.Scanln(&selec1)
-			//if selec1 == 1 {
-			//	_, err = db.Exec(`alter table cliente drop constraint cliente_pk`)
-			//}
-			//_, err = db.Query(mostrarDatos("PK_FK.sql"))
 		}
 
 		//OPCIÓN 6: CARGAR FUNCIONES.
@@ -255,6 +278,7 @@ func main() {
 			if err = rows.Err(); err != nil {
 				log.Fatal(err)
 			}
+			fmt.Printf("\n\n")
 		}
 
 		//OPCIÓN 8: GENERAR EL RESUMEN DE LAS COMPRAS.
@@ -264,12 +288,6 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			// fmt.Printf("\nPor favor, ingrese el número de cliente: ")
-			// var nrocli int
-			// fmt.Scanf("%s", &nrocli)
-			// fmt.Printf("\nIngrese el periodo del año que desea generar el resumen:")
-			// var fecha string
-			// fmt.Scanf("%s", &fecha)
 			fmt.Print("TABLA DETALLE VALORES ACTUALES: ")
 			rows, err := db.Query(`select * from detalle`)
 			if err != nil {
@@ -310,6 +328,64 @@ func main() {
 		//OPCIÓN 9: GENERAR DATOS EN BOLDDB.
 		if selec == 9 {
 			fmt.Printf("\nUsted ha seleccionado la opción 9: Generar datos en BoldDB.\n")
+			db, err := bolt.Open("tdbpi.boltdb", 0600, nil)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer db.Close()
+
+			/*TRES CLIENTES*/
+			//Cliente 1
+			cliente1 := clientes{Nrocliente: 1, Nombre: "Juan", Apellido: "Rosas", Domicilio: "Serano 701", Telefono: "011-68943567"}
+			data, err := json.Marshal(cliente1)
+			if err != nil {
+				panic(err)
+			}
+			CreateUpdate(db, "cliente", []byte(strconv.Itoa(cliente1.Nrocliente)), data)
+			resultado, err := ReadUnique(db, "cliente", []byte(strconv.Itoa(cliente1.Nrocliente)))
+			fmt.Printf("%s\n", resultado)
+
+			//Cliente 2
+			cliente2 := clientes{Nrocliente: 2, Nombre: "Martin", Apellido: "Valdez", Domicilio: "Mendoza 293", Telefono: "011-78908583"}
+			data2, err := json.Marshal(cliente2)
+			if err != nil {
+				panic(err)
+			}
+			CreateUpdate(db, "cliente", []byte(strconv.Itoa(cliente2.Nrocliente)), data2)
+			resultado2, err := ReadUnique(db, "cliente", []byte(strconv.Itoa(cliente2.Nrocliente)))
+			fmt.Printf("%s\n", resultado2)
+
+			//Cliente 3
+			cliente3 := clientes{Nrocliente: 3, Nombre: "Roberto", Apellido: "Gonzalez", Domicilio: "Las Heras 552", Telefono: "011-23587387"}
+			data3, err := json.Marshal(cliente3)
+			if err != nil {
+				panic(err)
+			}
+			CreateUpdate(db, "cliente", []byte(strconv.Itoa(cliente3.Nrocliente)), data3)
+			resultado3, err := ReadUnique(db, "cliente", []byte(strconv.Itoa(cliente3.Nrocliente)))
+			fmt.Printf("%s\n", resultado3)
+
+			/*TRES TARJETAS*/
+			//Tarjeta 1
+
+			//Tarjeta 2
+
+			//Tarjeta 3
+
+			/*TRES COMERCIOS*/
+			//Comercio 1
+
+			//Comercio 2
+
+			//Comercio 3
+
+			/*TRES COMPRAS*/
+			//Compra 1
+
+			//Compra 2
+
+			//Compra 3
+
 		}
 
 		//OPCIÓN 10: TESTEO 2 COMPRAS EN MENOS DE 1 MIN.
@@ -441,4 +517,40 @@ func menu() {
 	fmt.Printf("11. TESTEO 2 COMPRAS EN MENOS DE 5 MIN.\n")
 	fmt.Printf("12. TESTEO ALERTA POR 2 LIMITES DE COMPRA.\n")
 	fmt.Printf("Escriba 0 para salir.\n")
+}
+
+/*TRANSACCIÓN DE ESCRITURA*/
+func CreateUpdate(db *bolt.DB, bucketName string, key []byte, val []byte) error {
+
+	//Abre la transacción de escritura
+	tx, err := db.Begin(true)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	b, _ := tx.CreateBucketIfNotExists([]byte(bucketName))
+	err = b.Put(key, val)
+	if err != nil {
+		return err
+	}
+
+	//Cierra la transacción
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	return nil
+}
+
+/*TRANSACCIÓN DE LECTURA*/
+func ReadUnique(db *bolt.DB, bucketName string, key []byte) ([]byte, error) {
+
+	var buf []byte
+	//Abre una transacción de lectura
+	err := db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(bucketName))
+		buf = b.Get(key)
+		return nil
+	})
+	return buf, err
 }
