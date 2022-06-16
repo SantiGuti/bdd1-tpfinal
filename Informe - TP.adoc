@@ -16,7 +16,39 @@ Se utilizará una base de datos relacional en PostgreSQL y una base de datos NoS
 
 == Descripción
 
+La base SQL contiene la lógica y todos los datos necesarios, según el cual dependiendo de la situación de una tarjeta de crédito específica ésta se procesa y almacena en la tabla correspondiente.
+A partir de un consumo realizado éste debe autorizarse, según su situación pasará a ser rechazada o efectivamente se convertirá en una compra realizada.
+El consumo será rechazado si la tarjeta se encuentra suspendida, anulada, supera el límite de compra, su plazo de vigencia expiró o si el número de la tarjeta y/o código de seguridad sean inválidos.
+
+Se implementa la lógica para detectar fraudes durante la verificación del consumo.
+En el cual, se almacena una alerta dependiendo de las siguientes situaciones:
+- Si la tarjeta supera su límite de compra dos veces en el mismo día, lo cual hará que se cambie el estado de la tarjeta a suspendida.
+- Si se realizan dos consumos en menos de un minuto en dos comercios diferentes con el mismo código postal.
+- Si se realizan dos consumos en menos de cinco minutos en dos comercios diferentes con distinto código postal.
+
+Además, cuenta con la opción de generar facturas en base al período, por cliente y por cada tarjeta que posea.
+Contando con una cabecera y detalle con los datos correspondientes a la tarjeta, cliente y monto a pagar.
+
 == Implementación
 
-== Conclusiones 
+Se encuentran los siguientes archivos .SQL:
+- tablas = ejecuta los CREATE TABLE, los cuales crea todas las tablas necesarias para el modelo de datos que requerimos.
+- datos = ejecuta los INSERT INTO TABLE, asigna a cada tabla los datos necesarios y correspondientes.
+- PK_FK = ejecuta los ALTER TABLE ADD CONSTRAINT para asignarle a cada tabla su PK Y FK correspondiente.
+- drop_pk_fk = ejecuta los ALTER TABLE DROP CONSTRAINT los cuales elimina la asignación de su PK y FK a cada tabla.
+- SP&T = contiene los stored procedures y triggers para autorizar los consumos, generar las alertas y generar los resúmenes de las tarjetas.
+
+Para mostrar lo señalado anteriormente se creó una aplicación CLI escrita en GO, contiene un menú en el cual según la opción que el usuario seleccione, la realiza.
+Se crea la base de datos y se conecta con postgres.
+Se cargan las tablas, datos, funciones, PKs y FKs mediante la lectura y ejecución de cada archivo.
+Para mostrar todos los consumos procesados se utilizaron Querys para llamar a cada una de las funciones y para mostrar en pantalla los datos correspondientes.
+
+Se cuenta además con la opción de mostrar algunos datos de clientes, tarjetas, comercios y compras generados en BoltDB, con el objetivo de comparar la carga de datos en una base relacional con una no relacional.
+
+== Conclusiones
+
+Como conclusión a partir de lo trabajado en el trabajo práctico podemos mencionar que fue de ayuda para aprender en la práctica cómo funciona un modelo de datos, su estructura interna y conexión.
+Algo a destacar es que gracias a ésto se pudo ver de forma concreta cómo las PK y FK juegan un rol importante impactando en la ejecución de los stored procedures y triggers.
+
+Observamos la diferencia entre la base de datos relacional y la no relacional. Entre ellas se resalta en que la no relacional al no tener Pks y Fks no aseguran la integridad de los datos. No aportan soporte y consistencia como así lo hace una relacional.
 
