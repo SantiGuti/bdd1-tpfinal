@@ -1,11 +1,8 @@
 ALTER TABLE tarjeta 	DROP CONSTRAINT tarjeta_fk;
 ALTER TABLE compra  	DROP CONSTRAINT compra_nrotarjeta_fk; 
 ALTER TABLE compra  	DROP CONSTRAINT compra_nrocomercio_fk;
---ALTER TABLE rechazo 	DROP CONSTRAINT rechazo_nrotarjeta_fk;
 ALTER TABLE rechazo 	DROP CONSTRAINT rechazo_nrocomercio_fk; 
 ALTER TABLE cabecera 	DROP CONSTRAINT cabecera_fk;
---ALTER TABLE alerta 	    DROP CONSTRAINT alerta_nrotarjeta_fk; 
-ALTER TABLE alerta 	    DROP CONSTRAINT alerta_nrorechazo_fk;
 ALTER TABLE consumo 	DROP CONSTRAINT consumo_nrocomercio_fk;
 /*---------------------------------------------------------------*/
 ALTER TABLE cliente	    DROP CONSTRAINT cliente_pk; 	
