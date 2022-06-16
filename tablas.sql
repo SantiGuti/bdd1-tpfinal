@@ -25,7 +25,7 @@ create table comercio(
 );
 
 create table compra(
-	nrooperacion int,
+	nrooperacion serial,
 	nrotarjeta char(16),
 	nrocomercio int,
 	fecha timestamp,
@@ -34,7 +34,7 @@ create table compra(
 );
 
 create table rechazo(
-	nrorechazo int,
+	nrorechazo serial,
 	nrotarjeta char(16),
 	nrocomercio int,
 	fecha timestamp,
@@ -43,7 +43,7 @@ create table rechazo(
 );
 
 create table cierre(
-	año int,
+	anio int,
 	mes int,
 	terminacion int,
 	fechainicio date,
@@ -52,7 +52,7 @@ create table cierre(
 );
 
 create table cabecera(
-	nroresumen int,
+	nroresumen serial,
 	nombre text,
 	apellido text,
 	domicilio text,
@@ -64,7 +64,7 @@ create table cabecera(
 );
 
 create table detalle(
-	nroresumen int,
+	nroresumen serial,
 	nrolinea int,
 	fecha date,
 	nombrecomercio text,

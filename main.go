@@ -346,7 +346,7 @@ func main() {
 		//OPCIÓN 8: GENERAR EL RESUMEN DE LAS COMPRAS.
 		if selec == 8 {
 			fmt.Printf("\nUsted ha seleccionado la opción 8: Generar el resumen de las compras.\n")
-			_, err = db.Exec(`select generar_resumen(01, '202205')`)
+			_, err = db.Exec(`select generar_resumen(01, '202206')`)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -625,6 +625,42 @@ func main() {
 
 		//OPCIÓN 12: TESTEO ALERTA POR 2 LIMITES DE COMPRA MISMO DIA.
 
+		//OPCIÓN 13: LISTA DE RECHAZOS
+		if selec == 13 {
+			fmt.Printf("\nRECHAZOS.\n")
+			rows, err := db.Query(`select * from rechazo`)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer rows.Close()
+			for rows.Next() {
+				var nrorechazo string
+				var nrotarjeta string
+				var nrocomercio string
+				var fecha string
+				var monto string
+				var motivo string
+				err := rows.Scan(&nrorechazo, &nrotarjeta, &nrocomercio, &fecha, &monto, &motivo)
+				if err != nil {
+					log.Fatal(err)
+				}
+				fmt.Println(nrorechazo + "-" + nrotarjeta + "-" + nrocomercio + "-" + fecha + "-" + monto + "-" + motivo)
+			}
+			if err != nil {
+				log.Fatal(err)
+			}
+
+		}
+
+		/*14: TESTEO AUT COMPRA*/
+		if selec == 14 {
+			fmt.Printf("\nTESTEO AUT COMPRA.\n")
+			_, err := db.Query(`select testeo_autorizar_compras()`)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+
 		if selec == 0 {
 			leave = true
 		}
@@ -689,7 +725,9 @@ func menu() {
 	fmt.Printf("10. TESTEO 2 COMPRAS EN MENOS DE 1 MIN.\n")
 	fmt.Printf("11. TESTEO 2 COMPRAS EN MENOS DE 5 MIN.\n")
 	fmt.Printf("12. TESTEO ALERTA POR 2 LIMITES DE COMPRA.\n")
-	fmt.Printf("Escriba 0 para salir.\n\n")
+	fmt.Printf("13. LISTA DE RECHAZOS.\n")
+	fmt.Print("14. TESTEO testeo_autorizar_compras\n")
+	fmt.Printf("Escriba 0 para salir.\n")
 }
 
 /*TRANSACCIÓN DE ESCRITURA*/

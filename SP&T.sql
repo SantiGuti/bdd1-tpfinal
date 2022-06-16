@@ -8,35 +8,39 @@ begin
     select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta;
     if not found then
         /*Si no existe, la agrego a la tabla de rechazos con un mensaje y devuelvo falso.*/
-        insert into rechazo values (9, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Tarjeta no valida');
+        insert into rechazo (nrotarjeta, nrocomercio, fecha, monto, motivo)
+        values (vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Tarjeta no valida');
         return false; 
     end if;
 
     /*Si la tarjeta se encuentra suspendida, la añado a rechazos con su mensaje correspondiente y devuelvo falso.*/
     select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta AND estado = 'suspendida';
     if found then
-        insert into rechazo values(5, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'La tarjeta se encuentra suspendida.');
+        insert into rechazo (nrotarjeta, nrocomercio, fecha, monto, motivo) 
+        values (vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'La tarjeta se encuentra suspendida.');
         return false;
     end if;
    
     /*Si la tarjeta se encuentra anulada, la agrego a rechazos con su mensaje corresponiente y devuelvo falso.*/
     select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta AND estado = 'anulada';
     if found then
-        insert into rechazo values(5, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'La tarjeta se encuentra anulada.');
+        insert into rechazo (nrotarjeta, nrocomercio, fecha, monto, motivo) 
+        values(vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'La tarjeta se encuentra anulada.');
         return false;
     end if;
 
-    /*Para què me sirve este query?*/
-    /*select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta and estado != 'vigente';
+    select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta and estado != 'vigente';
     if found then
-        insert into rechazo values(1, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Tarjeta no vigente.');
+        insert into rechazo (nrotarjeta, nrocomercio, fecha, monto, motivo) 
+        values(vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Tarjeta no vigente.');
         return false;
-    end if;*/
+    end if;
 
     /*Si no coincide el còdigo de seguridad de la tarjeta, la añado a rechazos con su mensaje correspondiente y devuelvo falso.*/
     select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta and t.codseguridad != vcodseguridad;
     if found then
-        insert into rechazo values(2, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Código de seguridad inválido.');
+        insert into rechazo (nrotarjeta, nrocomercio, fecha, monto, motivo) 
+        values (vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Código de seguridad inválido.');
         return false;
     end if;
     
@@ -49,20 +53,23 @@ begin
     /*Verifico que la suma de los consumos no supere el lìmite de compra de la tarjeta*/
     select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta and (suma + vmonto) < t.limitecompra;
     if not found then
-        insert into rechazo values(7, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'La compra supera el limite de la tarjeta.');
+        insert into rechazo (nrotarjeta, nrocomercio, fecha, monto, motivo) 
+        values (vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'La compra supera el limite de la tarjeta.');
         return false;
     end if;
 
     /*Verifico que la tarjeta no estè vencida*/ 
     select * into resultado from tarjeta t where (t.nrotarjeta = vnrotarjeta) AND TO_DATE(t.validahasta, 'YYYYMM') < CURRENT_DATE;
     if found then
-        insert into rechazo values(4, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Plazo de vigencia expirado.');
+        insert into rechazo (nrotarjeta, nrocomercio, fecha, monto, motivo) 
+        values(vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Plazo de vigencia expirado.');
         return false;
     end if;
 
     /*Una vez verificado todo lo anterior, autorizo la compra y lo agrego a la tabla compras.*/
     raise notice 'Compra aceptada.';
-    insert into compra values (10, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, true);
+    insert into compra (nrotarjeta, nrocomercio, fecha, monto, pagado) 
+    values (vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, true);
     return true;
 end;
 $$ language plpgsql;
@@ -74,7 +81,6 @@ declare
     fechares date := TO_DATE(aniomes, 'YYYYMM');
     trecord record;
     comprarecord record;
-    nroresumencounter int := 0;
     nrolineacounter int := 0;
     datoscliente record;
     vnombrecomercio text;
@@ -88,20 +94,19 @@ begin
         FOR comprarecord IN select * from compra c where c.nrotarjeta = trecord.nrotarjeta and (c.fecha - fechares) <= '1month'
         LOOP
             select nombre into vnombrecomercio from comercio co where comprarecord.nrocomercio = co.nrocomercio;
-            /*Guarda los valores dentro de la tabla detalles.*/
-            insert into detalle values(nroresumencounter, nrolineacounter, comprarecord.fecha, vnombrecomercio, comprarecord.monto);
+        
+            insert into detalle (nrolinea, fecha, nombrecomercio, monto) 
+            values(nrolineacounter, comprarecord.fecha, vnombrecomercio, comprarecord.monto);
             nrolineacounter = nrolineacounter + 1;
-           /* insert into detalle values(nroresumencounter, nrolineacounter, comprarecord.fecha, vnombrecomercio, comprarecord.monto);
-            nrolineacounter = nrolineacounter + 1;*/
         END LOOP;
         select sum(com.monto) into suma from compra com where com.nrotarjeta = trecord.nrotarjeta and (com.fecha - fechares) <= '1month';
         if suma IS NULL then 
             suma = 0.00;
         end if;
-        
         /*Guarda los valores dentro de la tabla cabecera.*/
-        insert into cabecera values(nroresumencounter, datoscliente.nombre, datoscliente.apellido, datoscliente.domicilio, trecord.nrotarjeta, fechares, fechares + interval '1month', fechares + interval '1month' + '1week', suma);
-        nroresumencounter = nroresumencounter + 1;
+        insert into cabecera (nombre, apellido, domicilio, nrotarjeta, desde, hasta, vence, total) 
+        values(datoscliente.nombre, datoscliente.apellido, datoscliente.domicilio, trecord.nrotarjeta, fechares, fechares + interval '1month', fechares + interval '1month' + '1week', suma);
+        insert into cierre values (extract('year' from fechares), extract('month' from fechares), right(trecord.nrotarjeta, 4)::int, fechares, fechares + interval '1month', fechares + interval '1month' + '1week');
     END LOOP;
 
 end;
@@ -150,7 +155,7 @@ begin
     and compra.nrocomercio != new.nrocomercio --se chequea que sean != comercios
     and comercio.codigopostal = (select codigopostal from comercio where nrocomercio = new.nrocomercio)
     --se chequea que sea el mismo cp
-    and compra.fecha > CURRENT_TIMESTAMP - interval '1 minute';
+    and (compra.fecha - CURRENT_TIMESTAMP) >= '1min'; 
     -- FIJARSE QUE ESTÉ BIEN LA LOGICA que sea en un lapso menor a 1 min
 
     if found then
@@ -164,7 +169,7 @@ begin
     and compra.nrocomercio != new.nrocomercio
     and comercio.codigopostal != (select codigopostal from comercio where nrocomercio = new.nrocomercio)
     -- diferente cp
-    and compra.fecha > CURRENT_TIMESTAMP - interval '5 minute';
+    and (compra.fecha - CURRENT_TIMESTAMP) >= '5min';
     -- FIJARSE QUE ESTÉ BIEN LA LOGICA que sea en un lapso menor a 5 min
     if found then
         insert into alerta (nrotarjeta, fecha, codalerta, descripcion)
@@ -185,7 +190,7 @@ declare
 begin
     for infoChequeo in select * from consumo
     LOOP
-    select autorizar_compras(infoChequeo.nrotarjeta, infoChequeo.codseguridad, infoChequeo.nrocomercio, infoChequeo.monto);
+    PERFORM autorizar_compras(infoChequeo.nrotarjeta, infoChequeo.codseguridad, infoChequeo.nrocomercio, infoChequeo.monto);
     END LOOP;
 end;
 $$ language plpgsql;
