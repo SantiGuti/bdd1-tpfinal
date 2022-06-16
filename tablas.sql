@@ -25,7 +25,7 @@ create table comercio(
 );
 
 create table compra(
-	nrooperacion int,
+	nrooperacion serial,
 	nrotarjeta char(16),
 	nrocomercio int,
 	fecha timestamp,
@@ -34,7 +34,7 @@ create table compra(
 );
 
 create table rechazo(
-	nrorechazo int,
+	nrorechazo serial,
 	nrotarjeta char(16),
 	nrocomercio int,
 	fecha timestamp,

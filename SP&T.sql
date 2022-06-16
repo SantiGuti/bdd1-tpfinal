@@ -8,21 +8,24 @@ begin
     select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta;
     if not found then
         /*Si no existe, la agrego a la tabla de rechazos con un mensaje y devuelvo falso.*/
-        insert into rechazo values (9, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Tarjeta no valida');
+        insert into rechazo (nrotarjeta, nrocomercio, fecha, monto, motivo)
+        values (vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Tarjeta no valida');
         return false; 
     end if;
 
     /*Si la tarjeta se encuentra suspendida, la añado a rechazos con su mensaje correspondiente y devuelvo falso.*/
     select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta AND estado = 'suspendida';
     if found then
-        insert into rechazo values(5, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'La tarjeta se encuentra suspendida.');
+        insert into rechazo (nrotarjeta, nrocomercio, fecha, monto, motivo) 
+        values (vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'La tarjeta se encuentra suspendida.');
         return false;
     end if;
    
     /*Si la tarjeta se encuentra anulada, la agrego a rechazos con su mensaje corresponiente y devuelvo falso.*/
     select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta AND estado = 'anulada';
     if found then
-        insert into rechazo values(5, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'La tarjeta se encuentra anulada.');
+        insert into rechazo (nrotarjeta, nrocomercio, fecha, monto, motivo) 
+        values(vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'La tarjeta se encuentra anulada.');
         return false;
     end if;
 
@@ -36,7 +39,8 @@ begin
     /*Si no coincide el còdigo de seguridad de la tarjeta, la añado a rechazos con su mensaje correspondiente y devuelvo falso.*/
     select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta and t.codseguridad != vcodseguridad;
     if found then
-        insert into rechazo values(2, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Código de seguridad inválido.');
+        insert into rechazo (nrotarjeta, nrocomercio, fecha, monto, motivo) 
+        values (vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Código de seguridad inválido.');
         return false;
     end if;
     
@@ -49,20 +53,23 @@ begin
     /*Verifico que la suma de los consumos no supere el lìmite de compra de la tarjeta*/
     select * into resultado from tarjeta t where t.nrotarjeta = vnrotarjeta and (suma + vmonto) < t.limitecompra;
     if not found then
-        insert into rechazo values(7, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'La compra supera el limite de la tarjeta.');
+        insert into rechazo (nrotarjeta, nrocomercio, fecha, monto, motivo) 
+        values (vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'La compra supera el limite de la tarjeta.');
         return false;
     end if;
 
     /*Verifico que la tarjeta no estè vencida*/ 
     select * into resultado from tarjeta t where (t.nrotarjeta = vnrotarjeta) AND TO_DATE(t.validahasta, 'YYYYMM') < CURRENT_DATE;
     if found then
-        insert into rechazo values(4, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Plazo de vigencia expirado.');
+        insert into rechazo (nrotarjeta, nrocomercio, fecha, monto, motivo) 
+        values(vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, 'Plazo de vigencia expirado.');
         return false;
     end if;
 
     /*Una vez verificado todo lo anterior, autorizo la compra y lo agrego a la tabla compras.*/
     raise notice 'Compra aceptada.';
-    insert into compra values (10, vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, true);
+    insert into compra (nrotarjeta, nrocomercio, fecha, monto, pagado) 
+    values (vnrotarjeta, vnrocomercio, CURRENT_TIMESTAMP, vmonto, true);
     return true;
 end;
 $$ language plpgsql;
@@ -182,7 +189,7 @@ declare
 begin
     for infoChequeo in select * from consumo
     LOOP
-    select autorizar_compras(infoChequeo.nrotarjeta, infoChequeo.codseguridad, infoChequeo.nrocomercio, infoChequeo.monto);
+    PERFORM autorizar_compras(infoChequeo.nrotarjeta, infoChequeo.codseguridad, infoChequeo.nrocomercio, infoChequeo.monto);
     END LOOP;
 end;
 $$ language plpgsql;
